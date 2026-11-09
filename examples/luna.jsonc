@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    {
+      "package": "C:/path/to/OpenCodeCLI-Codex-AutoReasoning",
+      "options": {
+        "engine": "model",
+        // 判定用だけに使用。開発用モデルは変更しません。
+        "classifierModel": "openai/gpt-6-luna#low",
+        // 入力の外部送信・契約/料金・データ方針に同意した場合だけ true に変更してください。
+        "allowModelRequests": false,
+        "maxModelRequests": 100,
+        "modelMaxInputChars": 2000,
+        "timeoutMs": 15000,
+        "minEffort": "low",
+        "maxEffort": "xhigh"
+      }
+    }
+  ]
+}

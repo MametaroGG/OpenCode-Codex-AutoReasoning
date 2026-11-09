@@ -1,0 +1,25 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    {
+      // Replace with the absolute path to this package directory after npm run build.
+      "package": "C:/path/to/OpenCodeCLI-Codex-AutoReasoning",
+      "options": {
+        "enabled": true,
+        "engine": "model",
+        "classifierModel": "openai/gpt-6-luna#low",
+        "allowModelRequests": false,
+        "maxModelRequests": 100,
+        "modelMaxInputChars": 2000,
+        "minEffort": "low",
+        "maxEffort": "xhigh",
+        "defaultEffort": "medium",
+        "manualOverride": null,
+        "timeoutMs": 15000,
+        "cacheTtlMs": 1800000,
+        "maxEntries": 256,
+        "debug": false
+      }
+    }
+  ]
+}

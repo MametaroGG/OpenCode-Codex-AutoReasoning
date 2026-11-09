@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+*.tgz
+.package-smoke-*/
+release/
+# Raw local evaluation evidence includes machine paths and test-session IDs.
+evaluation-results/
+*.log
+.env
+.env.*
+!.env.example
+.npmrc
