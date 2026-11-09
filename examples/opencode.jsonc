@@ -3,7 +3,7 @@
   "plugins": [
     {
       // Replace with the absolute path to this package directory after npm run build.
-      "package": "C:/path/to/OpenCodeCLI-Codex-AutoReasoning",
+      "package": "C:/path/to/OpenCode-Codex-AutoReasoning",
       "options": {
         "enabled": true,
         "engine": "model",

@@ -1,10 +1,10 @@
 # バージョン管理とGitHub Releases
 
-このフォルダが独立したリポジトリのルートです。親フォルダや他プロジェクトは含めません。公開先は [MametaroGG/OpenCodeCLI-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCodeCLI-Codex-AutoReasoning)、ライセンスは [MIT](../LICENSE) です。パッケージ名・plugin IDは互換性のため維持しています。初回はGitHubのPre-releaseとして試用版を配布し、npm公開は実利用での確認後に検討します。
+このフォルダが独立したリポジトリのルートです。親フォルダや他プロジェクトは含めません。公開先は [MametaroGG/OpenCode-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning)、ライセンスは [MIT](../LICENSE) です。パッケージ名・plugin IDは互換性のため維持しています。初回はGitHubのPre-releaseとして試用版を配布し、npm公開は実利用での確認後に検討します。公開済みv0.1.0のtag・添付ファイルは改名のために上書きせず、メタデータの新URLは次の配布版から反映します。
 
 ## 公開前の確認
 
-- 公開先は `MametaroGG/OpenCodeCLI-Codex-AutoReasoning`（公開）。Releaseに添付するコードのライセンスがMITであることを確認する。
+- 公開先は `MametaroGG/OpenCode-Codex-AutoReasoning`（公開）。Releaseに添付するコードのライセンスがMITであることを確認する。
 - 実OpenCode 2.2.6の本体ロード・prompt ID・Solへのlow/xhigh HTTP送信・RPCは確認済み。[実ホスト検証](LIVE-HOST-VALIDATION.md)参照。native TUI描画とWebSocketは未確認であり、公開前に確認または制限を明記する。開発用の調整対象は`openai`のみです。
 - SDKの推移依存にmoderateの監査警告があることを確認する。未解決のまま出す場合は、リリースノートにも明記する。
 - 認証情報、実行ログ、不要な成果物をコミットしない。`evaluation-results/`の生ログは合成データでもローカルパス・セッションIDを含むため、ローカルに保持しGitと配布物から除外する。検証の要約・合成fixtureは公開する。
@@ -12,8 +12,8 @@
 ## ソースの取得
 
 ```powershell
-git clone https://github.com/MametaroGG/OpenCodeCLI-Codex-AutoReasoning.git
-cd OpenCodeCLI-Codex-AutoReasoning
+git clone https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning.git
+cd OpenCode-Codex-AutoReasoning
 git status --short
 ```
 

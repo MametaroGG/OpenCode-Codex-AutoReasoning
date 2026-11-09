@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- リポジトリをMametaroGG/OpenCode-Codex-AutoReasoningへ改名し、案内・パッケージメタデータのURLを更新。
+- CLI/API経由の実機検証済み範囲と、Desktop未検証・専用状態表示未実装を明記。
+- 公開済みv0.1.0のタグ・配布物・SHA-256は変更しない。
+
 ## 0.1.0 — 試用版（2026-11-09）
 
 - 実OpenCode 2.2.6でLuna判定2回＋Sol生成2回を実行。low/xhighが最終HTTP本文に反映され、両方HTTP 200で完了したことを確認。

@@ -29,7 +29,7 @@ test("public repository metadata and MIT license are included", async () => {
   const pkg = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   const license = await readFile(new URL("../LICENSE", import.meta.url), "utf8");
   assert.equal(pkg.license, "MIT");
-  assert.equal(pkg.repository.url, "git+https://github.com/MametaroGG/OpenCodeCLI-Codex-AutoReasoning.git");
+  assert.equal(pkg.repository.url, "git+https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning.git");
   assert.match(license, /^MIT License/);
   assert.match(license, /Copyright \(c\) 2026 MametaroGG/);
 });

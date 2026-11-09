@@ -1,6 +1,8 @@
-# OpenCode CLI Codex Auto Reasoning
+# OpenCode Codex Auto Reasoning
 
 OpenCode **V2**向けのTypeScriptプラグインです。**GPT-6 Lunaだけ**で指示の難易度を判定し、**`openai`プロバイダの開発用モデルだけ**の思考量を送信直前に調整します。
+
+本体はサーバー側で動作するためCLI専用の設計ではありません。ただし、実機確認済みなのはCLI/API経由のOpenCode 2.2.6です。**Desktop版は未検証**であり、現在の状態表示UIはTUI用です。Desktop専用の状態表示は未実装です。
 
 - **開発用モデルはユーザーが選択。プラグインは変更しません。**
 - 誤字修正も難しい実装も選択した判定モデルで判定。同じ指示はキャッシュします。
@@ -19,8 +21,8 @@ Node.js 22以上、OpenCode V2（SDK 2.2.6対応）が必要です。V1には非
 ### ソースから
 
 ```powershell
-git clone https://github.com/MametaroGG/OpenCodeCLI-Codex-AutoReasoning.git
-cd OpenCodeCLI-Codex-AutoReasoning
+git clone https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning.git
+cd OpenCode-Codex-AutoReasoning
 npm ci
 npm run build
 ```
@@ -33,7 +35,7 @@ npm run build
   "plugins": [
     {
       // 実際にclone/buildしたフォルダの絶対パスへ変更。
-      "package": "C:/path/to/OpenCodeCLI-Codex-AutoReasoning",
+      "package": "C:/path/to/OpenCode-Codex-AutoReasoning",
       "options": {
         "classifierModel": "openai/gpt-6-luna#low",
         // 入力送信・料金・データ方針に同意した場合だけ true に変更。
@@ -61,9 +63,9 @@ APIキーはこの設定に書かず、OpenCodeで接続済みのプロバイダ
 
 ### GitHub Releasesからの配布
 
-公開リポジトリは [MametaroGG/OpenCodeCLI-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCodeCLI-Codex-AutoReasoning)、ライセンスは [MIT](LICENSE) です。互換性のため、パッケージ名`opencode-auto-reasoning`とplugin IDは維持しています。ローカルフォルダ名は任意です。
+公開リポジトリは [MametaroGG/OpenCode-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning)、ライセンスは [MIT](LICENSE) です。互換性のため、パッケージ名`opencode-auto-reasoning`とplugin IDは維持しています。ローカルフォルダ名は任意です。
 
-まず **[GitHub Releases](https://github.com/MametaroGG/OpenCodeCLI-Codex-AutoReasoning/releases)のPre-release（試用版）**として`.tgz`と`SHA256SUMS`を配布し、普段の開発での確認後にnpm公開を検討します。**npmレジストリはまだ未公開**なので、パッケージ名だけでインストールしないでください。
+まず **[GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases)のPre-release（試用版）**として`.tgz`と`SHA256SUMS`を配布し、普段の開発での確認後にnpm公開を検討します。**npmレジストリはまだ未公開**なので、パッケージ名だけでインストールしないでください。既存のv0.1.0配布ファイルは変更せず、旧リポジトリURLを含むメタデータは次の配布版から更新します。
 
 Releaseの2ファイルをダウンロードし、`Get-FileHash ./opencode-auto-reasoning-0.1.0.tgz -Algorithm SHA256`でハッシュを照合した後、インストールします。
 

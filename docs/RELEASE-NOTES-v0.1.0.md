@@ -21,6 +21,7 @@ OpenCode V2向けのLuna専用・OpenAI向け自動思考量調整プラグイ�
 - 開発側は`openai`プロバイダのみ。判定役はGPT-6 Luna（openai/opencode）専用。
 - OpenCode V1には非対応。Node.js 22以上、SDK 2.2.6を対象。
 - native TUI描画・WebSocket・長時間のツール継続は実機未検証。
+- Desktop版は未検証です。本体はサーバー側で動作する設計ですが、Desktop専用の状態表示は未実装です。
 - 判定には利用枠または料金を消費します。正確なLuna使用量・請求額は取得できず不明です。
 - SDKの推移依存に既知のmoderate監査警告があります（記録時24件、high/criticalなし）。安全性を保証するものではありません。
 - 機密情報の完全な除去は保証しません。機密作業では外部判定を無効にしてください。
