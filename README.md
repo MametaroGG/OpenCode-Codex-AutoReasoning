@@ -1,176 +1,292 @@
+<div align="center">
+
 # OpenCode Codex Auto Reasoning
 
-OpenCode **V2**向けのTypeScriptプラグインです。**GPT-6 Lunaだけ**で指示の難易度を判定し、**`openai`プロバイダの開発用モデルだけ**の思考量を送信直前に調整します。
+**モデルはそのまま。思考量は、タスクに合わせて。**
 
-本体はサーバー側で動作するためCLI専用の設計ではありません。ただし、実機確認済みなのはCLI/API経由のOpenCode 2.2.6です。**Desktop版は未検証**であり、現在の状態表示UIはTUI用です。Desktop専用の状態表示は未実装です。
+GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effortを自動調整するOpenCode V2プラグイン。
 
-- **開発用モデルはユーザーが選択。プラグインは変更しません。**
-- 誤字修正も難しい実装も選択した判定モデルで判定。同じ指示はキャッシュします。
-- ローカル判定、hybrid、Antigravity、別モデルへの自動切替はありません。
-- 判定失敗・タイムアウト・未許可時は、元の開発用設定を保持します。
-- 外部送信は標準で無効。`allowModelRequests: true` が必要です。
+[![Preview v0.2.0](https://img.shields.io/badge/preview-v0.2.0-a78bfa?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.0)
+[![CI](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml)
+[![OpenCode V2](https://img.shields.io/badge/OpenCode-V2-18181b?style=flat-square)](https://opencode.ai/)
+[![Node.js 22+](https://img.shields.io/badge/Node.js-%3E%3D22-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-初回の実Luna検証は24課題×2回で期待ラベルとの一致率91.7%。小規模な合成評価であり、実装品質や節約効果を保証しません。[精度検証](docs/ACCURACY.md)を参照してください。**実OpenCode 2.2.6で本体ロード・prompt ID対応・Luna判定・Solへのlow/xhigh送信・HTTP 200・状態RPCを確認済み**です。[実ホスト検証](docs/LIVE-HOST-VALIDATION.md)。native TUI描画とWebSocketは未確認です。
+[ダウンロード](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.0) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
 
-無料のGemma 4を判定役にする追加検証は、初回の生成APIがHTTP 502で失敗したため保留中です。判定能力は未評価で、現在の設定からは選択できません。[調査記録](docs/GEMMA-EVALUATION.md)。
+</div>
 
-## 導入
+---
 
-Node.js 22以上、OpenCode V2（SDK 2.2.6対応）が必要です。V1には非対応です。
+## 特長
 
-### ソースから
+- **タスクに合わせて自動調整** — 指示の難易度を4段階で判定し、送信直前に思考量を選択。
+- **モデル別の選択ポリシー** — 全9系列と同じAPIモデルIDを持つFast版に対応。複数の公開ベンチマークを参考に設計。
+- **モデル選択はユーザーのまま** — 開発モデルの自動切替や、セッションの既定設定の書換えは行いません。
+- **ユーザー指定を尊重** — 明示variantや既存のリクエスト設定を保持。手動固定・上限設定も可能。
+- **失敗時は変更しない** — 判定失敗・タイムアウト・未許可の場合は元の設定を保持。
+- **必要な判定だけを実行** — 同一指示はキャッシュし、ツール継続での再判定を抑制。
+
+> [!IMPORTANT]
+> 現在は**Pre-release**です。判定の外部送信は初期状態で無効です。有効化には`allowModelRequests: true`が必要で、判定にも接続先の利用枠・料金が発生し得ます。
+
+## 目次
+
+- [クイックスタート](#quick-start)
+  - [必要な環境](#requirements)
+  - [インストール](#installation)
+  - [OpenCodeへ登録](#setup)
+- [使い方](#usage)
+- [対応モデルと思考量](#models)
+- [設定](#configuration)
+- [状態確認](#status)
+- [プライバシーと制限](#privacy)
+- [検証状況](#validation)
+- [開発・コントリビュート](#development)
+- [ライセンス](#license)
+
+<a id="quick-start"></a>
+## クイックスタート
+
+<a id="requirements"></a>
+### 1. 必要な環境
+
+| 項目 | 要件 |
+|---|---|
+| OpenCode | **V2**。SDK 2.2.6を対象に開発・検証。V1非対応 |
+| Node.js | **22以上** |
+| 判定用モデル | 接続済みの`openai/gpt-6-luna`または`opencode/gpt-6-luna` |
+| 開発用モデル | `openai`プロバイダの、思考量設定が確認できるモデル |
+
+本体はOpenCodeのサーバー側で動作します。**CLI/API経由の実機確認済み、Desktop版は未検証**です。状態表示UIはTUI用で、Desktop専用UIはありません。
+
+<a id="installation"></a>
+### 2. インストール
+
+#### GitHub Releasesから（推奨）
+
+[v0.2.0 Preview](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.0)から、次の2ファイルをダウンロードします。
+
+- `opencode-auto-reasoning-0.2.0.tgz`
+- `SHA256SUMS`
+
+PowerShellでSHA-256を計算し、`SHA256SUMS`の値と一致することを確認してからインストールしてください。
 
 ```powershell
+Get-FileHash ./opencode-auto-reasoning-0.2.0.tgz -Algorithm SHA256
+npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.2.0.tgz --ignore-scripts
+```
+
+プラグインの場所は`auto-reasoning-plugin/node_modules/opencode-auto-reasoning`です。設定にはこのフォルダの**絶対パス**を使います。
+
+**npmレジストリには未公開です。** パッケージ名だけを指定するインストールは使わないでください。
+
+<details>
+<summary>ソースからビルドする場合</summary>
+
+```sh
 git clone https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning.git
 cd OpenCode-Codex-AutoReasoning
 npm ci
 npm run build
 ```
 
-利用先の `opencode.jsonc` の既存 `plugins` 配列に要素を**追加**します。既存設定全体を置き換えないでください。
+設定の`package`には、ビルドしたリポジトリのフォルダの絶対パスを指定します。`main`にはリリース後の変更が含まれる場合があります。
+
+</details>
+
+<a id="setup"></a>
+### 3. OpenCodeへ登録
+
+利用先の`opencode.jsonc`の既存`plugins`配列へ、次の要素を追加します。**既存設定全体を置き換えないでください。**
 
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
   "plugins": [
     {
-      // 実際にclone/buildしたフォルダの絶対パスへ変更。
-      "package": "C:/path/to/OpenCode-Codex-AutoReasoning",
+      // インストール先の絶対パスへ変更してください。
+      "package": "C:/path/to/auto-reasoning-plugin/node_modules/opencode-auto-reasoning",
       "options": {
         "classifierModel": "openai/gpt-6-luna#low",
-        // 入力送信・料金・データ方針に同意した場合だけ true に変更。
-        "allowModelRequests": false,
-        "timeoutMs": 15000
+        // 入力送信・利用枠・料金・データ方針を確認後、trueに変更。
+        "allowModelRequests": false
       }
     }
   ]
 }
 ```
 
-APIキーはこの設定に書かず、OpenCodeで接続済みのプロバイダを使います。利用枠・料金を確認してから許可を有効にしてください。既定の最大100回は**インスタンス単位のSDK呼び出し上限**であり、金額の上限ではありません。
+APIキーをこの設定へ書く必要はありません。OpenCodeで接続済みのプロバイダを使います。送信先・利用権・利用枠・料金を確認し、`allowModelRequests`を`true`にすると自動判定が有効になります。
 
-### 判定役と開発用モデル
+全プロジェクトで使う場合は、同じ要素を`~/.config/opencode/opencode.jsonc`へ追加します。`XDG_CONFIG_HOME`を設定している場合はその配下です。プロジェクト側との二重登録は避けてください。端末用の`cli.json`への登録は不要です。
 
-判定役は **GPT-6 Luna専用**です。OpenCodeで `openai` または `opencode` 経由のLunaが利用可能であることが必要です。Haiku・Gemini・Gemmaは判定役として選択できず、利用できない場合も別モデルへ切り替えません。
+設定は通常、保存時に再読み込みされます。必要なら`/reload`を使い、**再読み込み後の新しい指示**から利用してください。
 
-開発用モデルはユーザーが選びますが、自動調整の対象は **`openai`プロバイダのみ**です。Claude・Gemini・Bedrock・OpenAI互換のカスタムプロバイダ・`opencode`経由の開発用モデルは変更せず、Luna判定も呼びません。手動overrideも非OpenAIには適用しません。判定役としての`opencode/gpt-6-luna`は引き続き指定可能です。
+<a id="usage"></a>
+## 使い方
 
-通常は設定保存で再読み込みされます。必要なら `/reload`。送信済みのリクエストは変えません。再読み込み前の指示を遡って送信せず、新しい指示から利用します。
+1. OpenCodeで、使いたい**OpenAIの開発モデル**を選びます。
+2. 思考量variantは指定せず、通常の`default`の状態にします。
+3. 普段どおり作業を依頼します。
+4. TUIの`/reasoning-status`で、難易度と選択した思考量を確認します。
 
-### 全プロジェクト共通
-
-同じ要素を `~/.config/opencode/opencode.jsonc`（`XDG_CONFIG_HOME`設定時はその配下）の `plugins` に追加します。絶対パス推奨。プロジェクト側で二重登録しないでください。端末用 `cli.json` ではありません。本開発中にグローバル設定は変更していません。
-
-### GitHub Releasesからの配布
-
-公開リポジトリは [MametaroGG/OpenCode-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning)、ライセンスは [MIT](LICENSE) です。互換性のため、パッケージ名`opencode-auto-reasoning`とplugin IDは維持しています。ローカルフォルダ名は任意です。
-
-**[GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases)のPre-release（試用版）**として`.tgz`と`SHA256SUMS`を配布し、普段の開発での確認後にnpm公開を検討します。**npmレジストリはまだ未公開**なので、パッケージ名だけでインストールしないでください。モデル別ポリシーr2はv0.2.0から含まれます。既存のv0.1.0配布ファイルは変更しません。
-
-Releaseの2ファイルをダウンロードし、`Get-FileHash ./opencode-auto-reasoning-0.2.0.tgz -Algorithm SHA256`でハッシュを照合した後、インストールします。
-
-```powershell
-npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.2.0.tgz --ignore-scripts
+```text
+ユーザーの指示
+    ↓
+GPT-6 Lunaが難易度を判定
+    ↓
+選択中のモデルに対応するポリシーを適用
+    ↓
+カタログの対応思考量と設定のmin/maxを適用
+    ↓
+同じ開発モデルへ送信
 ```
 
-既存`plugins`の`package`には、インストール先の`auto-reasoning-plugin/node_modules/opencode-auto-reasoning`の絶対パスを指定します。外部送信は既定で無効です。利用権・料金・データ方針を確認してから`allowModelRequests: true`にします。詳細は [RELEASING.md](docs/RELEASING.md)。検証の要約と合成fixtureは公開し、生の評価ログ・テストセッションIDはローカルに保存して公開対象から除外しています。
+`#high`などを明示した場合や、既存のリクエストに思考量設定がある場合は自動調整しません。通常の`default`は自動調整の対象ですが、カタログに実在する`default`というvariantは明示指定として保持します。
 
-## 思考量の選択
+優先順位は**無効化 → 既存リクエスト設定の保持 → 手動固定 → 明示variantの保持 → 自動判定**です。手動固定にもモデルの対応範囲とmin/maxを適用します。
 
-共通フォールバック表（モデル別表がない場合、または`modelPolicy: "common"`）：
+<a id="models"></a>
+## 対応モデルと思考量
 
-| 難易度 | 要求する思考量 |
-|---|---|
-| Very Low | low |
-| Low | medium |
-| High | high |
-| Very High | xhigh |
+判定役は**GPT-6 Luna専用**、開発用の調整対象は**`openai`プロバイダのみ**です。対象外のプロバイダでは、判定呼び出しも思考量の変更も行いません。
 
-開発側は`openai`に限定し、モデル設定・variantに実在する`reasoningEffort`だけを使用します。variant名やモデル名だけでは対応と判定しません。他プロバイダの`effort`・`thinking`・思考予算を変換する試作処理は撤去しました。
+### モデル別ポリシー
 
-Lunaの難易度判定後、開発モデルのAPI modelIDに応じて思考量を選びます。**6.1 Sol／Terra、6 Astra／Sol／Luna、5.6 Sol／Terra／Luna、5.5の全9系列**に、それぞれの公開ベンチマークを参考にした個別ポリシーを適用します。Fast版は実際のAPI modelIDが同じ場合に表を共有します。未知モデル・API ID不明のみ上記共通表へ自動fallbackします。**最適値の実証ではなく暫定方針**です。[全対応表・出典・限界](docs/MODEL-POLICIES.md)。`modelPolicy: "common"`で従来表へ戻せます。
+| 開発モデル | Very Low | Low | High | Very High |
+|---|---|---|---|---|
+| GPT-6.1 Sol | low | medium | high | xhigh |
+| GPT-6.1 Terra | low | high | xhigh | max |
+| GPT-6 Astra | low | low | medium | xhigh |
+| GPT-6 Sol | low | medium | xhigh | max |
+| GPT-6 Luna | low | high | xhigh | max |
+| GPT-5.6 Sol | low | medium | xhigh | max |
+| GPT-5.6 Terra | low | high | xhigh | max |
+| GPT-5.6 Luna | low | high | xhigh | max |
+| GPT-5.5 | low | high | xhigh | xhigh |
 
-利用可能なminimal / low / medium / high / xhigh / maxを確認し、min/maxの範囲内で切り上げ、なければ範囲内の最大対応値へフォールバックします。対応不明・設定方式の混在・範囲内に値がない場合は変更しません。`minimal`は最小値を下げて手動指定する場合に使用可能です。`none`は自動選択せず、明示variantや既存request overrideは保持します。
+Fast版は**カタログのAPI modelIDが同じ場合**に同じ表を使います。名前の末尾から推測したり、モデルを切り替えたりはしません。未知モデル・API ID不明では共通表の`low / medium / high / xhigh`を使います。
 
-現在のr2は[複数の独立ベンチマークを比較](docs/MULTI-BENCHMARK-REVIEW.md)し、6.1 Solの最難をxhigh、6 Lunaの最難をmax、5.6 TerraのHighをxhighに見直しました。評価間の不一致・timeoutリスクも記録しています。自動割当の最適性や実利用の節約を実証したものではありません。
+VulcanBench、Datacurve DeepSWE、Artificial Analysis、Hex DataBench等を参考にした**暫定ポリシー**です。公式がこの割当を推奨しているわけではなく、最適性や実利用での品質・節約効果を保証しません。[選択方針](docs/MODEL-POLICIES.md)・[ベンチマーク比較](docs/MULTI-BENCHMARK-REVIEW.md)で根拠と限界を説明しています。
 
-OpenAI向け処理は、実ホスト上のSolへの2ターンで最終HTTP本文と正常応答まで確認しました。開発成果物の品質・節約効果、全OpenAIモデルの動作を保証するものではありません。
+実際には、カタログで確認できた`reasoningEffort`だけを使います。min/maxの範囲内で切り上げ、なければ範囲内の最大対応値を選択します。対応不明・設定方式の混在・範囲内に候補がない場合は変更しません。`none`は自動選択しませんが、ユーザーの明示設定は保持します。
 
-優先順位は、無効化 → 他プラグインの既存request override保持 → 手動指定 → 明示model variant保持 → モデル判定。手動指定にもモデル対応範囲・min/maxを適用します。
-
-OpenCodeがvariant未指定時に付ける`default`は、同名の実variantがカタログにない場合だけ自動調整の対象として扱います。カタログに定義された`default` variantは通常の明示指定として保持します。
-
+<a id="configuration"></a>
 ## 設定
 
-OpenCodeがJSON/JSONCを解釈し、`plugins[].options`として渡します。[全設定例](examples/opencode.jsonc)・[Luna設定例](examples/luna.jsonc)。
+すべて`plugins[].options`へ指定します。通常は必要な項目だけ設定してください。[全設定例](examples/opencode.jsonc)・[Luna設定例](examples/luna.jsonc)も利用できます。
 
-| キー | デフォルト | 説明 |
+| オプション | 既定値 | 説明 |
 |---|---|---|
-| enabled | true | falseで手動指定も含め変更しない |
-| engine | model | 互換用。modelのみ指定可能、省略推奨 |
-| modelPolicy | benchmark | モデル別暫定表。commonで従来の共通表 |
-| classifierModel | openai/gpt-6-luna#low | openai/opencodeのGPT-6 Lunaのみ。variantはカタログで確認 |
-| allowModelRequests | false | 入力送信・契約に応じた課金への明示的許可 |
-| maxModelRequests | 100 | ロードから停止までのSDK呼び出し上限、1〜10,000 |
-| modelMaxInputChars | 2000 | user指示部分の合計文字数上限、1〜8000。固定の判定用指示は別 |
-| minEffort | low | minimal / low / medium / high / xhigh / max |
-| maxEffort | max | 同上。最小値未満は不可。既存の明示xhigh上限は維持 |
-| defaultEffort | medium | 互換用の最終既定値。通常は判定モデルの明示判定を使用し、失敗時には適用しない |
-| manualOverride | null | 努力量を固定。nullでモデル判定へ戻す |
-| timeoutMs | 15000 | 判定の制限時間、1〜60,000ms |
-| cacheTtlMs | 1800000 | キャッシュと状態のTTL、1〜86,400,000ms |
-| maxEntries | 256 | 各キャッシュと同時判定の上限、1〜4096 |
-| debug | false | 努力量・難易度・キャッシュ命中のみ出力 |
+| `enabled` | `true` | `false`で手動固定も含め調整を停止 |
+| `allowModelRequests` | `false` | Lunaへ指示を送信するための明示的許可 |
+| `classifierModel` | `openai/gpt-6-luna#low` | 判定用Luna。`opencode`経由も指定可能 |
+| `modelPolicy` | `benchmark` | モデル別表。`common`で共通表を使用 |
+| `minEffort` | `low` | 選択する思考量の下限 |
+| `maxEffort` | `max` | 選択する思考量の上限 |
+| `manualOverride` | `null` | 思考量を手動固定。`null`で自動へ戻す |
+| `maxModelRequests` | `100` | インスタンスのSDK呼び出し上限 |
+| `timeoutMs` | `15000` | 判定の制限時間（ミリ秒） |
 
-選択した判定モデルのカタログIDが別のAPIモデルに差し替えられている場合も拒否します。無効・不在・非chat・未知のvariantの場合は、別モデルへ切り替えません。Geminiは判定役・開発用の自動調整とも対象外です。
+`minEffort`・`maxEffort`・`manualOverride`には`minimal / low / medium / high / xhigh / max`を指定できます。`minimal`の手動固定には下限も`minimal`へ変更してください。未対応の値はモデルへ送信しません。
 
-### 旧設定からの移行
+> [!WARNING]
+> **v0.2.0から、既定上限は`xhigh`ではなく`max`です。** 待ち時間や利用枠の消費が増える可能性があります。上限を維持したい場合は`maxEffort: "xhigh"`を明記してください。
 
-v0.2.0のモデル別対応では、既定上限を`xhigh`から`max`に変更しました。上限を維持したい場合は`maxEffort: "xhigh"`を明記してください。従来の共通表は`modelPolicy: "common"`で選択できます。公開済みv0.1.0の配布物にはモデル別表・max対応は含まれません。
+従来の共通表と上限を使う場合は、既存の`options`に次の項目を設定します。
 
-`engine: "local"`、`"hybrid"`、`"antigravity"` は削除するか `"model"` に変更してください。試作中のHaiku判定設定も廃止し、Luna以外の`classifierModel`は拒否します。不正値・不明なキーはプラグイン全体を無効化し、黙って有料送信へ移行しません。Lunaへの変更・`allowModelRequests`の有効化は利用権・送信・料金を確認の上で明示的に行ってください。
+```jsonc
+"modelPolicy": "common",
+"maxEffort": "xhigh"
+```
 
-タイムアウトの既定値は3秒から**15秒**へ変更しました。初回実測はCLI起動込みで最大約12.4秒だったための余裕であり、15秒以内の応答を保証するものではありません。
+<details>
+<summary>詳細オプションと入力チェック</summary>
 
+| オプション | 既定値 | 説明 |
+|---|---|---|
+| `engine` | `model` | 互換用。`model`のみ指定可能、省略推奨 |
+| `modelMaxInputChars` | `2000` | 送信するユーザー指示の合計文字数上限（1〜8,000）。固定の判定用指示は別 |
+| `defaultEffort` | `medium` | 互換用の最終既定値。判定失敗時には適用しない |
+| `cacheTtlMs` | `1800000` | キャッシュと状態のTTL（1〜86,400,000ms） |
+| `maxEntries` | `256` | 各キャッシュ・状態の保持上限（1〜4,096） |
+| `debug` | `false` | 思考量・難易度・キャッシュ命中をログ出力 |
+
+`maxModelRequests`は1〜10,000、`timeoutMs`は1〜60,000msです。下限が上限を超える範囲、不正値、不明な設定キーは拒否し、プラグインを無効化します。判定用モデルが不在・無効・別APIモデルへの差替え・非対応variantの場合も、他モデルには切り替えません。
+
+</details>
+
+<a id="status"></a>
 ## 状態確認
 
-セッションで **`/reasoning-status`** またはパレットの **Auto Reasoning: 状態を表示** を使います。読み取り専用RPCから選択値・理由・難易度・キャッシュ命中・判定時間を表示し、新しいuser指示やモデル呼び出しは追加しません。`./tui`部分がサーバー部分とともに読み込まれ、追加の `cli.json` 設定は不要です。
+TUIで次のコマンドを実行します。コマンドパレットの**Auto Reasoning: 状態を表示**からも確認できます。
 
-v0.2.0では選択方針`policy`と、制約適用前の`requestedEffort`も表示します。`effort`はモデル対応範囲・min/max適用後です。
+```text
+/reasoning-status
+```
 
-ツール `auto_reasoning_status` は詳細な状態も返します。ただし通常の指示でツール使用を依頼すると、その依頼自体が新しい判定対象になります。元のタスクを見る場合はスラッシュコマンドを使ってください。
+難易度、選択した思考量、制約適用前の推奨値、ポリシー、判定理由、判定時間、キャッシュ命中を表示します。読み取り専用で、新しい作業指示やモデル呼び出しは追加しません。
 
-- `metrics`: 判定回数、キャッシュ命中、失敗、累計判定時間。生成が1回でも発生すると `additionalTokens` はnull（不明）。0トークンの意味ではありません。
-- `classifier.modelUsage`: SDK呼び出し回数、実行中件数、許可・上限等による拒否、送信したuser指示の文字数。請求額やSDK内部リトライ回数ではありません。
-- `usage`: 最後に観測した `session.usage.updated` のセッション使用量。判定モデルの独立生成を含むとは仮定しません。
-- `retained`: 上限付きキャッシュの保持件数。TTLはアクセス時に評価し、期限切れも保持上限を超えません。
+- 画面のモデルvariant表示自体は変更しません。
+- 状態は**プラグインの選択値**です。後続処理を含む最終HTTP送信値を監視するものではありません。
+- 詳細ツール`auto_reasoning_status`も利用できます。ただし、通常の指示でツール使用を依頼すると、その指示自体が判定対象になる場合があります。
+- Lunaの正確なトークン量・請求額は取得できず、不明な使用量を0とは表示しません。セッション使用量がLunaの独立生成分を含むとも仮定しません。
 
-UIのモデルvariant表示自体は変えません。通常の状態表示は本プラグインの要求値であり、後続hookやraw body overlayによる最終送信値の変更を監視するものではありません。今回の実ホスト試験では別のobserverで最終HTTP本文を検査しています。
+<a id="privacy"></a>
+## プライバシーと制限
 
-## 安全性と制限
+### 送信する情報
 
-- ファイル・スキル展開前のprompt hookで捕捉したuser指示だけを送信。前2件は各500文字以内、現在指示と合わせた文字数を制限します。system instructions・ツール結果・展開後のソースを代用しません。ID対応が取れなければ元設定を保持します。
-- コードフェンス・一般的な資格情報を除去しますが、秘密情報を完全に検出できる保証はありません。機密作業は `enabled: false` または `allowModelRequests: false` とし、思考量はユーザー側で設定してください。
-- 同一指示はキャッシュし、ツール継続では再判定しません。失敗もTTL内はキャッシュします。
-- 外部判定はインスタンスあたり同時1件。実行中の場合、別セッションの設定を流用せず元設定を保持します。
-- タイムアウト・停止時にAbortSignalを渡しますが、サーバー側の推論・課金停止は保証しません。中止を無視する要求が残っている間は追加の外部判定を開始しません。
-- 回数上限は再読み込みでリセットされ、プロジェクトごとのインスタンスに分かれます。出力トークン上限を渡せない実験的APIのため、厳密な請求額上限にはプロバイダ側の予算設定が必要です。
-- APIキー・環境変数・認証情報を収集せず、プロンプト・例外本文をログに出しません。
-- SDKの推移依存にmoderateの監査警告があります。[検証結果](docs/VALIDATION.md)を参照してください。
+ファイル・スキル展開前に捕捉したユーザー指示、直前2件の指示（各500文字以内）、添付数を基に、文字数上限を適用して判定します。展開後のソース、システム指示、ツール結果を判定入力の代用にはしません。元の指示との対応が確認できなければ調整しません。
 
-## 開発・検証
+コードフェンスや一般的な資格情報は除去しますが、**秘密情報の完全な検出・除去は保証しません**。機密作業では`enabled: false`または`allowModelRequests: false`にしてください。プラグインは認証情報を収集せず、指示全文や例外本文をログへ出しません。
 
-```powershell
+### 利用枠・待ち時間
+
+- 判定にも接続先の利用枠または料金を消費します。接続方式・契約を確認してください。
+- `maxModelRequests`は**インスタンス単位のSDK呼び出し上限で、金額の上限ではありません**。再読み込みでリセットされ、プロジェクトごとのインスタンスに分かれます。
+- 外部判定は同時1件です。別の判定が実行中なら、その結果を流用せず元設定を保持します。失敗もTTL内はキャッシュします。
+- タイムアウト・停止を通知しますが、サーバー側の推論や課金の停止は保証しません。厳密な料金上限はプロバイダ側で管理してください。
+- 高い思考量が常に良い結果になるとは限りません。特に6 Lunaの`max`では、公開評価でタイムアウト増加が報告されています。
+
+<a id="validation"></a>
+## 検証状況
+
+| 検証項目 | 状況 |
+|---|---|
+| 自動テスト・型検査 | **98件成功**。全9系列×通常／Fast×4難易度の72組合せをモックで検証 |
+| ビルド・配布物 | Windows／Linux CI、実tarballのオフラインインストール検証が成功 |
+| 実OpenCode | 2.2.6でLuna判定、Solへのlow/xhigh送信、HTTP正常応答、状態RPCを確認 |
+| モデル別ポリシー・maxの実送信 | **未検証**。実ホスト確認はv0.1.0の共通表によるもの |
+| Desktop・native TUI描画・WebSocket・長時間のツール継続 | **実機未検証** |
+| 実開発の品質・節約効果 | **未測定** |
+
+既知のSDK推移依存の監査警告があります。v0.2.0公開時点ではmoderate 24件、high/criticalなしです。安全性を保証するものではありません。
+
+詳細：[ポリシー検証](docs/MODEL-POLICY-VALIDATION.md) · [実ホスト検証](docs/LIVE-HOST-VALIDATION.md) · [分類精度評価](docs/ACCURACY.md)
+
+<a id="development"></a>
+## 開発・コントリビュート
+
+不具合や改善案は[Issues](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)へお寄せください。OpenCodeのバージョン、CLI／Desktop、開発モデルとvariant、機密情報を除いた再現手順を添えると調査しやすくなります。APIキー・指示全文・実プロジェクトのソースは投稿しないでください。
+
+```sh
+npm ci
 npm run typecheck
 npm test
 npm run build
 npm run benchmark
 npm run verify:package
-npm run release:pack
 ```
 
-通常のテストはモデル応答をモック化し、実モデルを呼びません。`benchmark` は固定Luna応答の検証・キャッシュ・5万件の保持上限を測るオフライン試験で、モデル精度や速度の測定ではありません。旧ローカル判定は比較履歴の再現用に `scripts/baselines/` に隔離し、実行時にも配布物にも含めません。
+通常のテストはモデル応答をモック化し、実モデルを呼びません。`benchmark`は検証処理・キャッシュ・保持上限を測るオフライン試験で、モデルの精度や速度を測るものではありません。実モデルによる評価は明示的な承認と利用条件の確認が必要です。
 
-`verify:package` は実tarballを別の一時consumerへオフラインインストールし、許可ゲート・Luna判定／OpenAI向けprompt/context/状態RPC/cleanupと非OpenAIの設定保持をモックホストで実行します。npmキャッシュの準備に `npm ci` が必要です。実サーバーのプラグインローダーを検証するものではありません。
+[開発ルール](AGENTS.md) · [変更履歴](CHANGELOG.md) · [リリース手順](docs/RELEASING.md)
 
-実モデル評価は[精度検証](docs/ACCURACY.md)・[実ホスト検証](docs/LIVE-HOST-VALIDATION.md)を参照してください。実ホスト試験では別の承認でLuna 2回＋Sol 2回を使用しました。以前の精度評価・Gemma試験の台帳は上書きせず保持しています。今回の許可枠は使用済みで、追加の外部送信・費用には別途承認が必要です。
+<a id="license"></a>
+## ライセンス
+
+[MIT License](LICENSE) © 2026 MametaroGG
+
+OpenCode・OpenAIの公式プロジェクトではありません。
