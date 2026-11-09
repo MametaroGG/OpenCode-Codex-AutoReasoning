@@ -19,8 +19,15 @@ test("no synthetic effort levels are inferred from token budgets", () => {
 });
 test("mixed semantic settings and unknown levels fail closed", () => {
   assert.deepEqual(supportedEfforts(model({ reasoningEffort: "low" }, { effort: "high" })), []);
-  assert.deepEqual(supportedEfforts(model({ reasoningEffort: "max" })), []);
+  assert.deepEqual(supportedEfforts(model({ reasoningEffort: "unknown" })), []);
   assert.deepEqual(supportedEfforts({ variants: [{ settings: {} }] }), []);
+});
+test("max is supported only when advertised and respects old caps", () => {
+  assert.deepEqual(supportedEfforts(model({ reasoningEffort: "none" }, { reasoningEffort: "max" })), ["max"]);
+  assert.equal(selectEffort("max", ["high", "xhigh", "max"], defaults), "max");
+  assert.equal(selectEffort("max", ["high", "xhigh", "max"], { ...defaults, maxEffort: "xhigh" }), "xhigh");
+  assert.equal(selectEffort("max", ["low", "xhigh"], defaults), "xhigh");
+  assert.equal(selectEffort("low", ["high", "max"], { ...defaults, minEffort: "medium" }), "high");
 });
 test("all explicit reasoning overrides remain protected", () => {
   for (const key of ["reasoningEffort", "effort", "thinking", "thinkingConfig", "thinkingBudget", "enableThinking", "reasoning", "outputConfig", "output_config"]) {

@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 試用版（2026-11-09）
+
+- 複数の独立評価を比較したr2へ更新。6.1 SolのVery Highをhigh→xhigh、6 LunaのVery Highをxhigh→max、5.6 TerraのHighをmax→xhighに変更。他6系列は維持。異なる評価での反証・費用条件・適用限界をdocs/MULTI-BENCHMARK-REVIEW.mdへ記録。
+
+- Lunaの難易度と開発モデルの思考量選択を分離。6.1 Sol／Terra、6 Astra／Sol／Luna、5.6 Sol／Terra／Luna、5.5の全9系列に各モデルの一次ベンチマークを参照した暫定ポリシーを適用。共通表への自動fallbackは未知モデル・API ID不明のみ。Fast版はカタログのAPI modelIDで解決。
+- max対応と既定maxEffortのmaxへの拡張。明示xhigh上限は維持。modelPolicy: commonで従来表へ戻せる。
+- 状態に適用方針と制約適用前の推奨値を追加。追加の実モデル試験なし。公開済みv0.1.0は変更しない。
 
 - リポジトリをMametaroGG/OpenCode-Codex-AutoReasoningへ改名し、案内・パッケージメタデータのURLを更新。
 - CLI/API経由の実機検証済み範囲と、Desktop未検証・専用状態表示未実装を明記。

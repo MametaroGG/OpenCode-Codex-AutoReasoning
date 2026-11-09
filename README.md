@@ -65,17 +65,19 @@ APIキーはこの設定に書かず、OpenCodeで接続済みのプロバイダ
 
 公開リポジトリは [MametaroGG/OpenCode-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning)、ライセンスは [MIT](LICENSE) です。互換性のため、パッケージ名`opencode-auto-reasoning`とplugin IDは維持しています。ローカルフォルダ名は任意です。
 
-まず **[GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases)のPre-release（試用版）**として`.tgz`と`SHA256SUMS`を配布し、普段の開発での確認後にnpm公開を検討します。**npmレジストリはまだ未公開**なので、パッケージ名だけでインストールしないでください。既存のv0.1.0配布ファイルは変更せず、旧リポジトリURLを含むメタデータは次の配布版から更新します。
+**[GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases)のPre-release（試用版）**として`.tgz`と`SHA256SUMS`を配布し、普段の開発での確認後にnpm公開を検討します。**npmレジストリはまだ未公開**なので、パッケージ名だけでインストールしないでください。モデル別ポリシーr2はv0.2.0から含まれます。既存のv0.1.0配布ファイルは変更しません。
 
-Releaseの2ファイルをダウンロードし、`Get-FileHash ./opencode-auto-reasoning-0.1.0.tgz -Algorithm SHA256`でハッシュを照合した後、インストールします。
+Releaseの2ファイルをダウンロードし、`Get-FileHash ./opencode-auto-reasoning-0.2.0.tgz -Algorithm SHA256`でハッシュを照合した後、インストールします。
 
 ```powershell
-npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.1.0.tgz --ignore-scripts
+npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.2.0.tgz --ignore-scripts
 ```
 
 既存`plugins`の`package`には、インストール先の`auto-reasoning-plugin/node_modules/opencode-auto-reasoning`の絶対パスを指定します。外部送信は既定で無効です。利用権・料金・データ方針を確認してから`allowModelRequests: true`にします。詳細は [RELEASING.md](docs/RELEASING.md)。検証の要約と合成fixtureは公開し、生の評価ログ・テストセッションIDはローカルに保存して公開対象から除外しています。
 
 ## 思考量の選択
+
+共通フォールバック表（モデル別表がない場合、または`modelPolicy: "common"`）：
 
 | 難易度 | 要求する思考量 |
 |---|---|
@@ -86,7 +88,11 @@ npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.1.0.tgz
 
 開発側は`openai`に限定し、モデル設定・variantに実在する`reasoningEffort`だけを使用します。variant名やモデル名だけでは対応と判定しません。他プロバイダの`effort`・`thinking`・思考予算を変換する試作処理は撤去しました。
 
-利用可能なminimal / low / medium / high / xhighを確認し、min/maxの範囲内で切り上げ、なければ最大対応値へフォールバックします。対応不明・設定方式の混在・範囲内に値がない場合は変更しません。`minimal`は最小値を下げて手動指定する場合に使用可能です。
+Lunaの難易度判定後、開発モデルのAPI modelIDに応じて思考量を選びます。**6.1 Sol／Terra、6 Astra／Sol／Luna、5.6 Sol／Terra／Luna、5.5の全9系列**に、それぞれの公開ベンチマークを参考にした個別ポリシーを適用します。Fast版は実際のAPI modelIDが同じ場合に表を共有します。未知モデル・API ID不明のみ上記共通表へ自動fallbackします。**最適値の実証ではなく暫定方針**です。[全対応表・出典・限界](docs/MODEL-POLICIES.md)。`modelPolicy: "common"`で従来表へ戻せます。
+
+利用可能なminimal / low / medium / high / xhigh / maxを確認し、min/maxの範囲内で切り上げ、なければ範囲内の最大対応値へフォールバックします。対応不明・設定方式の混在・範囲内に値がない場合は変更しません。`minimal`は最小値を下げて手動指定する場合に使用可能です。`none`は自動選択せず、明示variantや既存request overrideは保持します。
+
+現在のr2は[複数の独立ベンチマークを比較](docs/MULTI-BENCHMARK-REVIEW.md)し、6.1 Solの最難をxhigh、6 Lunaの最難をmax、5.6 TerraのHighをxhighに見直しました。評価間の不一致・timeoutリスクも記録しています。自動割当の最適性や実利用の節約を実証したものではありません。
 
 OpenAI向け処理は、実ホスト上のSolへの2ターンで最終HTTP本文と正常応答まで確認しました。開発成果物の品質・節約効果、全OpenAIモデルの動作を保証するものではありません。
 
@@ -102,12 +108,13 @@ OpenCodeがJSON/JSONCを解釈し、`plugins[].options`として渡します。[
 |---|---|---|
 | enabled | true | falseで手動指定も含め変更しない |
 | engine | model | 互換用。modelのみ指定可能、省略推奨 |
+| modelPolicy | benchmark | モデル別暫定表。commonで従来の共通表 |
 | classifierModel | openai/gpt-6-luna#low | openai/opencodeのGPT-6 Lunaのみ。variantはカタログで確認 |
 | allowModelRequests | false | 入力送信・契約に応じた課金への明示的許可 |
 | maxModelRequests | 100 | ロードから停止までのSDK呼び出し上限、1〜10,000 |
 | modelMaxInputChars | 2000 | user指示部分の合計文字数上限、1〜8000。固定の判定用指示は別 |
-| minEffort | low | minimal / low / medium / high / xhigh |
-| maxEffort | xhigh | 同上。最小値未満は不可 |
+| minEffort | low | minimal / low / medium / high / xhigh / max |
+| maxEffort | max | 同上。最小値未満は不可。既存の明示xhigh上限は維持 |
 | defaultEffort | medium | 互換用の最終既定値。通常は判定モデルの明示判定を使用し、失敗時には適用しない |
 | manualOverride | null | 努力量を固定。nullでモデル判定へ戻す |
 | timeoutMs | 15000 | 判定の制限時間、1〜60,000ms |
@@ -119,6 +126,8 @@ OpenCodeがJSON/JSONCを解釈し、`plugins[].options`として渡します。[
 
 ### 旧設定からの移行
 
+v0.2.0のモデル別対応では、既定上限を`xhigh`から`max`に変更しました。上限を維持したい場合は`maxEffort: "xhigh"`を明記してください。従来の共通表は`modelPolicy: "common"`で選択できます。公開済みv0.1.0の配布物にはモデル別表・max対応は含まれません。
+
 `engine: "local"`、`"hybrid"`、`"antigravity"` は削除するか `"model"` に変更してください。試作中のHaiku判定設定も廃止し、Luna以外の`classifierModel`は拒否します。不正値・不明なキーはプラグイン全体を無効化し、黙って有料送信へ移行しません。Lunaへの変更・`allowModelRequests`の有効化は利用権・送信・料金を確認の上で明示的に行ってください。
 
 タイムアウトの既定値は3秒から**15秒**へ変更しました。初回実測はCLI起動込みで最大約12.4秒だったための余裕であり、15秒以内の応答を保証するものではありません。
@@ -126,6 +135,8 @@ OpenCodeがJSON/JSONCを解釈し、`plugins[].options`として渡します。[
 ## 状態確認
 
 セッションで **`/reasoning-status`** またはパレットの **Auto Reasoning: 状態を表示** を使います。読み取り専用RPCから選択値・理由・難易度・キャッシュ命中・判定時間を表示し、新しいuser指示やモデル呼び出しは追加しません。`./tui`部分がサーバー部分とともに読み込まれ、追加の `cli.json` 設定は不要です。
+
+v0.2.0では選択方針`policy`と、制約適用前の`requestedEffort`も表示します。`effort`はモデル対応範囲・min/max適用後です。
 
 ツール `auto_reasoning_status` は詳細な状態も返します。ただし通常の指示でツール使用を依頼すると、その依頼自体が新しい判定対象になります。元のタスクを見る場合はスラッシュコマンドを使ってください。
 

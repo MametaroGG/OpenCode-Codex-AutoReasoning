@@ -7,6 +7,7 @@ import { AutoReasoning, statusSessionID } from "./rpc.js";
 import { Cache } from "./cache.js";
 import { sanitizePrompt, boundedModelInput } from "./privacy.js";
 import { createModelClassifier } from "./model-classifier.js";
+import { modelEffort } from "./model-policy.js";
 
 // Exported separately so tests can drive real API callbacks without calling a model.
 export async function setup(ctx: Plugin.Context) {
@@ -59,12 +60,14 @@ export async function setup(ctx: Plugin.Context) {
     if (!active) return;
     if (assessment?.failed) { status("classification-failed-preserved"); return; }
     const decision = assessment?.decision;
-    const desired = config.manualOverride ?? decision?.effort ?? config.defaultEffort;
+    const recommendation = decision ? modelEffort(model, decision.difficulty, config) : undefined;
+    const desired = config.manualOverride ?? recommendation?.effort ?? config.defaultEffort;
     const selected = selectEffort(desired, supported, config);
     if (!selected) { status("no-effort-in-configured-range"); return; }
     const variant = event.model.variant ? model.variants.find(v => v.id === event.model.variant) : undefined;
     const current = variant?.settings?.reasoningEffort ?? model.settings?.reasoningEffort;
     controller.statuses.set(event.sessionID, { effort: selected,
+      requestedEffort: desired, policy: config.manualOverride ? "manual" : recommendation?.policy ?? "default",
       reason: config.manualOverride ? "manual-override" : "model-assessment",
       difficulty: decision?.difficulty, reasons: decision?.reasons,
       ...(decision?.classifierModel ? { classifierModel: decision.classifierModel } : {}),

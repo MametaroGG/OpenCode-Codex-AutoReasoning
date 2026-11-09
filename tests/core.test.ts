@@ -15,7 +15,7 @@ const mockClassifier: Classifier = { id: "mock-luna", classify(input) {
 } };
 test("strict config rejects unsafe limits, misspellings and unknown efforts", () => {
   for (const c of [{ enabled: "false" }, { maxEntries: 0 }, { timeoutMs: Infinity },
-    { minEffort: "high", maxEffort: "low" }, { engine: "imaginary" }, { defaultEffort: "max" },
+    { minEffort: "high", maxEffort: "low" }, { engine: "imaginary" }, { defaultEffort: "unknown" },
     { debgu: true }, { toString: true }, null, []]) assert.throws(() => parseConfig(c));
   assert.deepEqual(parseConfig({}), defaults);
   assert.equal(defaults.engine, "model");
@@ -25,7 +25,7 @@ test("strict config rejects unsafe limits, misspellings and unknown efforts", ()
 });
 test("capabilities use variant settings, not names or hardcoded model IDs", () => {
   assert.deepEqual(supportedEfforts({ variants: [{ settings: { reasoningEffort: "low" } },
-    { settings: { reasoningEffort: "xhigh" } }, { settings: { reasoningEffort: "max" } }] }), ["low", "xhigh"]);
+    { settings: { reasoningEffort: "xhigh" } }, { settings: { reasoningEffort: "max" } }] }), ["low", "xhigh", "max"]);
   assert.deepEqual(supportedEfforts({ variants: [{}] }), []);
 });
 test("safe fallback and strict min/max across different models", () => {

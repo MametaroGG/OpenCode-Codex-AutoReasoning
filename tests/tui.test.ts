@@ -47,6 +47,13 @@ test("home command gives guidance without an RPC call", async () => {
   const h = harness(); h.route({ type: "home" }); await h.run();
   assert.equal(h.calls, 0); assert.equal(h.toasts.length, 1); h.cleanup();
 });
+test("status distinguishes benchmark recommendation from capped selected effort", () => {
+  const value = formatStatus({ status: { effort: "xhigh", requestedEffort: "max",
+    policy: "benchmark-2026-11-09-r2:gpt-6.1-terra", reason: "model-assessment" } });
+  assert.match(value, /選択した思考量: xhigh/);
+  assert.match(value, /上限・対応範囲適用前: max/);
+  assert.match(value, /benchmark-2026-11-09-r2:gpt-6.1-terra/);
+});
 test("RPC errors are generic and do not leak exception messages", async () => {
   const h = harness(); h.fail(); await h.run();
   assert.equal(h.alerts.length, 0); assert.equal(h.toasts.length, 1);

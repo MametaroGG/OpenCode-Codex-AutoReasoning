@@ -7,12 +7,14 @@
       "options": {
         "enabled": true,
         "engine": "model",
+        "modelPolicy": "benchmark",
         "classifierModel": "openai/gpt-6-luna#low",
         "allowModelRequests": false,
         "maxModelRequests": 100,
         "modelMaxInputChars": 2000,
         "minEffort": "low",
-        "maxEffort": "xhigh",
+        // Keep "xhigh" here if you do not want to permit max.
+        "maxEffort": "max",
         "defaultEffort": "medium",
         "manualOverride": null,
         "timeoutMs": 15000,

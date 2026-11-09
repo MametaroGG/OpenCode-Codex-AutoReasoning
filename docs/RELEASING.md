@@ -1,6 +1,6 @@
 # バージョン管理とGitHub Releases
 
-このフォルダが独立したリポジトリのルートです。親フォルダや他プロジェクトは含めません。公開先は [MametaroGG/OpenCode-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning)、ライセンスは [MIT](../LICENSE) です。パッケージ名・plugin IDは互換性のため維持しています。初回はGitHubのPre-releaseとして試用版を配布し、npm公開は実利用での確認後に検討します。公開済みv0.1.0のtag・添付ファイルは改名のために上書きせず、メタデータの新URLは次の配布版から反映します。
+このフォルダが独立したリポジトリのルートです。親フォルダや他プロジェクトは含めません。公開先は [MametaroGG/OpenCode-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning)、ライセンスは [MIT](../LICENSE) です。パッケージ名・plugin IDは互換性のため維持しています。GitHubのPre-releaseとして試用版を配布し、npm公開は実利用での確認後に検討します。公開済みv0.1.0のtag・添付ファイルは上書きせず、モデル別ポリシーとメタデータの新URLはv0.2.0から反映します。
 
 ## 公開前の確認
 
@@ -48,7 +48,7 @@ package.jsonのバージョンと同じtag（例: `v0.1.0`）を作り、そのt
 3. 配布物とハッシュを生成。
 4. GitHub Releaseを**ドラフト**として作成し添付。自動公開はしない。
 
-実モデルの評価はCIから起動しません。ActionsにはOpenAIのAPIキーは不要です。draft作成のみGitHubの標準GITHUB_TOKENを使います。tagからのdraft作成workflowのGitHub実行は未検証です。
+実モデルの評価はCIから起動しません。ActionsにはOpenAIのAPIキーは不要です。draft作成のみGitHubの標準GITHUB_TOKENを使います。tagからのdraft作成workflowはv0.1.0で実行・成功を確認済みです。
 
 ドラフトの説明・添付物・ライセンス・既知の制約を確認した後、初回版は**Pre-release**として手動公開します。通常の安定版やLatestへ昇格させません。公開済みtagを移動・上書きせず、修正時は新バージョンを作ってください。
 
@@ -57,7 +57,7 @@ package.jsonのバージョンと同じtag（例: `v0.1.0`）を作り、そのt
 ReleaseからtgzとSHA256SUMSをダウンロードし、SHA-256を確認してください。PowerShellでは `Get-FileHash <tgzのパス> -Algorithm SHA256` が使えます。
 
 ```powershell
-npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.1.0.tgz --ignore-scripts
+npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.2.0.tgz --ignore-scripts
 ```
 
 OpenCodeの既存`plugins`へ、インストール先の `auto-reasoning-plugin/node_modules/opencode-auto-reasoning` の絶対パスを追加します。送信・費用を確認してから `allowModelRequests: true` にします。他の設定は [README](../README.md) を参照してください。

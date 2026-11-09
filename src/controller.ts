@@ -11,6 +11,8 @@ export interface Assessment {
 }
 export interface Status {
   effort?: Effort;
+  requestedEffort?: Effort;
+  policy?: string;
   reason: string;
   reasons?: string[];
   difficulty?: Decision["difficulty"];

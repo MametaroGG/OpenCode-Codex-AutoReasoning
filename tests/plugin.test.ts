@@ -5,7 +5,7 @@ import type { SessionContext, SessionPrompt } from "@opencode/plugin/promise/ses
 import { setup } from "../src/index.js";
 
 function harness(options: Record<string, unknown> = {}, current = "medium", development?: {
-  providerID: string; settings: Record<string, unknown>; variants: { id: string; settings?: Record<string, unknown> }[];
+  id?: string; modelID?: string; providerID: string; settings: Record<string, unknown>; variants: { id: string; settings?: Record<string, unknown> }[];
 }) {
   let hook: ((event: SessionContext) => Promise<void>) | undefined;
   let promptHook: ((event: SessionPrompt) => void) | undefined;
@@ -32,7 +32,7 @@ function harness(options: Record<string, unknown> = {}, current = "medium", deve
     model: { list: async () => {
       if (modelWait) await modelWait;
       if (modelError) throw new Error("sensitive-api-key-must-not-be-logged");
-       return { data: [{ id: "test-model", providerID: "openai", variants, settings: { reasoningEffort: current }, ...development },
+       return { data: [{ id: "test-model", providerID: "openai", enabled: true, status: "active", variants, settings: { reasoningEffort: current }, ...development },
          { id: classifier.id, modelID: classifier.id, providerID: classifier.providerID, enabled: true, status: "active", variants: [{ id: "low" }] }] };
     } },
     tool: { transform: async (fn: (e: { add(t: typeof tool): void }) => void) => {
@@ -50,7 +50,7 @@ function harness(options: Record<string, unknown> = {}, current = "medium", deve
     } } },
   } as unknown as Plugin.Context;
   const event = (text = "README.mdの誤字を修正", sessionID = "s1"): SessionContext => ({
-    sessionID: sessionID as SessionContext["sessionID"], agent: Agent.ID.make("build"), model: Model.Ref.parse(`${development?.providerID ?? "openai"}/test-model`),
+    sessionID: sessionID as SessionContext["sessionID"], agent: Agent.ID.make("build"), model: Model.Ref.parse(`${development?.providerID ?? "openai"}/${development?.id ?? "test-model"}`),
     messages: [{ id: "m1", role: "user", content: [{ type: "text", text }] }],
     options: {}, system: [], tools: {},
   });
@@ -90,6 +90,76 @@ test("real setup callback selects effort and reports reasons/cache/metrics", asy
   assert.equal(snapshot.metrics.additionalTokens, null);
   await cleanup!(); assert.equal(h.disposed, 4);
 });
+test("catalog API identity applies to Fast aliases and cache survives model changes", async () => {
+  const development = { id: "gpt-6.1-terra-fast", modelID: "gpt-6.1-terra", providerID: "openai", settings: { reasoningEffort: "medium" },
+    variants: ["low", "medium", "high", "xhigh", "max"].map(e => ({ id: e, settings: { reasoningEffort: e } })) };
+  const h = harness({}, "medium", development); const cleanup = await setup(h.ctx);
+  h.modelResponse('{"difficulty":"Very High","reasons":["algorithm-or-concurrency"]}');
+  // The Fast catalog alias uses the normal API identity without changing selection.
+  const first = h.event(); const identity = JSON.stringify(first.model); await h.apply(first);
+  assert.equal(first.options.reasoningEffort, "max");
+  assert.equal(JSON.stringify(first.model), identity);
+  assert.equal((await h.status()).status.policy, "benchmark-2026-11-09-r2:gpt-6.1-terra");
+  development.modelID = "gpt-6.1-sol";
+  development.id = "gpt-6.1-sol-fast";
+  const second = h.event(); await h.apply(second);
+  assert.equal(second.options.reasoningEffort, "xhigh");
+  assert.equal((await h.status()).status.cacheHit, true);
+  assert.equal(h.modelCalls, 1);
+  await cleanup!();
+});
+test("profile recommendation is clamped, while manual and existing overrides retain priority", async () => {
+  const development = { modelID: "gpt-6.1-terra", providerID: "openai", settings: { reasoningEffort: "medium" },
+    variants: ["low", "high", "xhigh", "max"].map(e => ({ id: e, settings: { reasoningEffort: e } })) };
+  const h = harness({ maxEffort: "xhigh" }, "medium", development); const cleanup = await setup(h.ctx);
+  h.modelResponse('{"difficulty":"Very High","reasons":["algorithm-or-concurrency"]}');
+  const e = h.event(); await h.apply(e);
+  assert.equal(e.options.reasoningEffort, "xhigh");
+  assert.equal((await h.status()).status.requestedEffort, "max");
+  const explicit = { ...h.event(), model: Model.Ref.parse("openai/test-model#none") };
+  await h.apply(explicit); assert.deepEqual(explicit.options, {});
+  const override = h.event(); override.options.reasoningEffort = "none";
+  await h.apply(override); assert.equal(override.options.reasoningEffort, "none");
+  assert.equal(h.modelCalls, 1); await cleanup!();
+  const m = harness({ manualOverride: "max" }, "medium", development); const end = await setup(m.ctx);
+  const manual = m.event(); await m.apply(manual);
+  assert.equal(manual.options.reasoningEffort, "max"); assert.equal(m.modelCalls, 0); await end!();
+});
+for (const [modelID, expected] of [
+  ["gpt-6.1-sol", ["low", "medium", "high", "xhigh"]],
+  ["gpt-6.1-terra", ["low", "high", "xhigh", "max"]],
+  ["gpt-6-astra", ["low", "low", "medium", "xhigh"]],
+  ["gpt-6-sol", ["low", "medium", "xhigh", "max"]],
+  ["gpt-6-luna", ["low", "high", "xhigh", "max"]],
+  ["gpt-5.6-sol", ["low", "medium", "xhigh", "max"]],
+  ["gpt-5.6-terra", ["low", "high", "xhigh", "max"]],
+  ["gpt-5.6-luna", ["low", "high", "xhigh", "max"]],
+  ["gpt-5.5", ["low", "high", "xhigh", "xhigh"]],
+] as const) {
+  test(`all difficulties reach the context hook for normal/Fast catalogs: ${modelID}`, async () => {
+    const levels = modelID === "gpt-5.5" ? ["low", "medium", "high", "xhigh"] : ["low", "medium", "high", "xhigh", "max"];
+    const development = { id: modelID as string, modelID, providerID: "openai", settings: { reasoningEffort: "medium" },
+      variants: levels.map(e => ({ id: e, settings: { reasoningEffort: e } })) };
+    const h = harness({}, "medium", development); const cleanup = await setup(h.ctx);
+    for (const [i, difficulty] of (["Very Low", "Low", "High", "Very High"] as const).entries()) {
+      h.modelResponse(JSON.stringify({ difficulty, reasons: ["limited-or-unknown-scope"] }));
+      for (const suffix of ["", "-fast"]) {
+        development.id = `${modelID}${suffix}`;
+        const e = h.event(`synthetic task ${i}`, `level-${i}`);
+        const identity = JSON.stringify(e.model);
+        await h.apply(e);
+        const snapshot = await h.status(`level-${i}`);
+        assert.equal(snapshot.status.effort, expected[i]);
+        assert.equal(snapshot.status.requestedEffort, expected[i]);
+        assert.equal(snapshot.status.policy, `benchmark-2026-11-09-r2:${modelID}`);
+        assert.equal(snapshot.status.cacheHit, suffix === "-fast");
+        assert.equal(e.options.reasoningEffort ?? "medium", expected[i]);
+        assert.equal(JSON.stringify(e.model), identity);
+      }
+    }
+    assert.equal(h.modelCalls, 4); await cleanup!();
+  });
+}
 for (const [providerID, low, high] of [
   ["anthropic", { effort: "low", thinking: { type: "adaptive" } }, { effort: "high", thinking: { type: "adaptive" } }],
   ["amazon-bedrock", { effort: "low" }, { effort: "high" }],

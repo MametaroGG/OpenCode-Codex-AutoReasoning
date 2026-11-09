@@ -1,8 +1,9 @@
-export const efforts = ["minimal", "low", "medium", "high", "xhigh"] as const;
+export const efforts = ["minimal", "low", "medium", "high", "xhigh", "max"] as const;
 export type Effort = (typeof efforts)[number];
 export interface Config {
   enabled: boolean;
   engine: "model";
+  modelPolicy: "benchmark" | "common";
   classifierModel: string;
   allowModelRequests: boolean;
   maxModelRequests: number;
@@ -17,7 +18,7 @@ export interface Config {
   debug: boolean;
 }
 export const defaults: Config = {
-  enabled: true, engine: "model", minEffort: "low", maxEffort: "xhigh",
+  enabled: true, engine: "model", modelPolicy: "benchmark", minEffort: "low", maxEffort: "max",
   classifierModel: "openai/gpt-6-luna#low", allowModelRequests: false,
   maxModelRequests: 100, modelMaxInputChars: 2000,
   defaultEffort: "medium", manualOverride: null, timeoutMs: 15_000,
@@ -35,6 +36,7 @@ export function parseConfig(input: unknown): Config {
   const c = { ...defaults, ...raw } as Config;
   if (typeof c.enabled !== "boolean" || typeof c.debug !== "boolean" || typeof c.allowModelRequests !== "boolean") throw new Error("Invalid switch");
   if (c.engine !== "model") throw new Error("Only model classification is supported");
+  if (c.modelPolicy !== "benchmark" && c.modelPolicy !== "common") throw new Error("Invalid model policy");
   if (typeof c.classifierModel !== "string" || c.classifierModel.length > 256 ||
       !/^(?:openai|opencode)\/gpt-6-luna(?:#[a-zA-Z0-9._-]+)?$/.test(c.classifierModel)) throw new Error("Only GPT-6 Luna classification is supported");
   if (![c.minEffort, c.maxEffort, c.defaultEffort].every(isEffort) ||

@@ -11,6 +11,8 @@ export function formatStatus(value: unknown): string {
     `理由: ${typeof status.reason === "string" ? status.reason : "不明"}`,
   ];
   if (typeof status.difficulty === "string") lines.push(`難易度: ${status.difficulty}`);
+  if (typeof status.policy === "string") lines.push(`選択方針: ${status.policy}`);
+  if (typeof status.requestedEffort === "string") lines.push(`上限・対応範囲適用前: ${status.requestedEffort}`);
   if (typeof status.classifierModel === "string") lines.push(`判定用モデル: ${status.classifierModel}`);
   if (Array.isArray(status.reasons)) lines.push(`判定根拠: ${status.reasons.filter(r => typeof r === "string").join(", ")}`);
   if (typeof status.cacheHit === "boolean") lines.push(`キャッシュ: ${status.cacheHit ? "命中" : "新規判定"}`);
