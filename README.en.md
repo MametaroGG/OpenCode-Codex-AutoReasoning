@@ -32,7 +32,7 @@ flowchart LR
 npm i opencode-codex-autoreasoning --ignore-scripts
 ```
 
-Omitting the version installs `latest`. Pin a version only if needed. To keep it out of your project's dependencies, install into a dedicated folder instead:
+Omitting the version installs `latest`. Pin a version only if needed. To keep it out of your project's dependencies, install into a dedicated folder instead.
 
 ```powershell
 npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts

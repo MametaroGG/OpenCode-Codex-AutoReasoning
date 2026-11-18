@@ -32,7 +32,7 @@ flowchart LR
 npm i opencode-codex-autoreasoning --ignore-scripts
 ```
 
-バージョン指定を省くと`latest`を入ります。固定したい場合のみバージョンを付けてください。プロジェクトの依存を追加したくない場合は専用フォルダへ入れることもできます:
+バージョン指定を省くと`latest`を入ります。固定したい場合のみバージョンを付けてください。プロジェクトの依存を追加したくない場合は専用フォルダへ入れることもできます。
 
 ```powershell
 npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts
