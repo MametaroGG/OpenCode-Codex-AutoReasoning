@@ -4,7 +4,7 @@ OpenCode V2向けの自動思考量調整プラグインの試用版です。GPT
 
 ## v0.2.3からの変更
 
-- npmパッケージ名を最終名の`opencode-codex-autoreasoning`へ変更。0.2.2の`opencode-auto-reasoning`と0.2.3の`opencode-codex-reasoning`はいずれも誤りで、プラグイン本体はnpmに公開されていませんでした（前者には`0.0.0-stage`プレースホルダーだけが存在します）。公開済みの0.2.2／0.2.3のタグ・GitHub Releaseは変更していません。
+- npmパッケージ名を最終名の`opencode-codex-autoreasoning`へ変更。0.2.2の`opencode-auto-reasoning`と0.2.3の`opencode-codex-reasoning`はいずれも誤りで、プラグイン本体はnpmに公開されていませんでした（当時、前者には`0.0.0-stage`プレースホルダーだけが存在していましたが、公開後にサイトから削除済みです）。公開済みの0.2.2／0.2.3のタグ・GitHub Releaseは変更していません。
 - `package.json`・lockfile・README・リリースノート・配布検証スクリプトの名前とインストール手順を更新。GitHub Releasesのtgz名も`opencode-codex-autoreasoning-0.2.4.tgz`です。
 - v0.2.3の機能内容（reasoning effort対応32系列、09 r2の9系列・18 r2の5系列・18 r1の7系列・ヒューリスティック11系列）とLunaの精度に関する記述は変更なし。詳細は[v0.2.3のリリースノート](RELEASE-NOTES-v0.2.3.md)を参照してください。
 
