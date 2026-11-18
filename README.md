@@ -7,13 +7,14 @@
 GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effortを自動調整するOpenCode V2プラグイン。
 
 [![npm](https://img.shields.io/npm/v/opencode-codex-autoreasoning?style=flat-square&logo=npm)](https://www.npmjs.com/package/opencode-codex-autoreasoning)
+[![GitHub Package](https://img.shields.io/badge/GitHub_Packages-v0.2.4-18181b?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning)
 [![Release v0.2.4](https://img.shields.io/badge/release-v0.2.4-22c55e?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4)
 [![CI](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml)
 [![OpenCode V2](https://img.shields.io/badge/OpenCode-V2-18181b?style=flat-square)](https://opencode.ai/)
 [![Node.js 22+](https://img.shields.io/badge/Node.js-%3E%3D22-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-[npmパッケージ](https://www.npmjs.com/package/opencode-codex-autoreasoning) · [GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
+[npmパッケージ](https://www.npmjs.com/package/opencode-codex-autoreasoning) · [GitHub Package](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning) · [GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
 
 </div>
 
@@ -86,6 +87,17 @@ npm i opencode-codex-autoreasoning@0.2.4 --ignore-scripts
 ```
 
 この場合は`plugins[].package`を`<プロジェクト>/node_modules/opencode-codex-autoreasoning`の絶対パスにしてください。
+
+#### GitHub Packagesから
+
+[GitHub Package](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning)でも同じバージョンを公開しています。GitHub Packagesは**認証が必要**です（`read:packages`権限のPAT等を用意してください）。
+
+```powershell
+npm config set @mametarogg:registry https://npm.pkg.github.com
+npm i @mametarogg/opencode-codex-autoreasoning@0.2.4 --ignore-scripts
+```
+
+`plugins[].package`には`node_modules/@mametarogg/opencode-codex-autoreasoning`の絶対パスを指定します。
 
 #### GitHub Releasesから
 
@@ -308,6 +320,7 @@ TUIで次のコマンドを実行します。コマンドパレットの**Auto R
 | 自動テスト・型検査 | **146件成功**。複数ベンチマーク14系列、単一sweep7系列、ヒューリスティック11系列、主要なFast／Flex／Pro／Ultrafast別名×4難易度をモックで検証 |
 | ビルド・配布物 | Windows／Linux CI、実tarballのオフラインインストール検証が成功 |
 | npm公開 | `opencode-codex-autoreasoning@0.2.4`をnpmレジストリへ公開。別ディレクトリへのクリーンインストールと`dist/index.js`のimportを確認 |
+| GitHub Packages | `@mametarogg/opencode-codex-autoreasoning@0.2.4`をActionsの`GITHUB_TOKEN`で公開 |
 | 実OpenCode | 2.2.6でLuna判定、Solへのlow/xhigh送信、HTTP正常応答、状態RPCを確認 |
 | モデル別ポリシー・maxの実送信 | **未検証**。実ホスト確認はv0.1.0の共通表によるもの |
 | Desktop・native TUI描画・WebSocket・長時間のツール継続 | **実機未検証** |
