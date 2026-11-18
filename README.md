@@ -101,7 +101,7 @@ npm i @mametarogg/opencode-codex-autoreasoning@0.2.4 --ignore-scripts
 
 #### GitHub Releasesから
 
-[v0.2.4 Preview](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4)から、次の2ファイルをダウンロードします。
+[v0.2.4 Release](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4)から、次の2ファイルをダウンロードします。
 
 - `opencode-codex-autoreasoning-0.2.4.tgz`
 - `SHA256SUMS`
