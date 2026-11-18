@@ -1,6 +1,6 @@
 # バージョン管理とGitHub Releases
 
-このフォルダが独立したリポジトリのルートです。親フォルダや他プロジェクトは含めません。公開先は [MametaroGG/OpenCode-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning)、ライセンスは [MIT](../LICENSE) です。パッケージ名・plugin IDは互換性のため維持しています。GitHubのPre-releaseとして試用版を配布し、npm公開は実利用での確認後に検討します。公開済みv0.1.0のtag・添付ファイルは上書きせず、モデル別ポリシーとメタデータの新URLはv0.2.0から反映します。最新のv0.2.1は、新規対応モデルを含む全32系列のポリシーを含む試用版です。公開済みv0.2.0のtag・添付ファイルも変更しません。
+このフォルダが独立したリポジトリのルートです。親フォルダや他プロジェクトは含めません。公開先は [MametaroGG/OpenCode-Codex-AutoReasoning](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning)、ライセンスは [MIT](../LICENSE) です。パッケージ名・plugin IDは互換性のため維持しています。GitHubのPre-releaseとして試用版を配布し、v0.2.2からnpmレジストリにも公開しています。公開済みv0.1.0のtag・添付ファイルは上書きせず、モデル別ポリシーとメタデータの新URLはv0.2.0から反映します。最新のv0.2.2は、新規対応モデルを含む全32系列のポリシーに加えてnpm公開を含む試用版です。公開済みv0.2.0のtag・添付ファイルも変更しません。
 
 ## 公開前の確認
 
@@ -37,7 +37,17 @@ npm run release:pack
 - `opencode-auto-reasoning-<version>.tgz`: dist、ドキュメント、設定例、package.json。
 - `SHA256SUMS`: 配布ファイルのSHA-256。
 
-node_modules、比較用の旧ローカル判定、実行ログ、実モデル評価の台帳は含めません。依存ライブラリは同梱しないのでインストール時にnpmが取得します。試用段階では`private: true`を維持し、npmレジストリには公開しません。将来のnpm公開では、名前の空き・権限・2FA・公開対象を別途確認し、明示承認後に実行します。
+node_modules、比較用の旧ローカル判定、実行ログ、実モデル評価の台帳は含めません。依存ライブラリは同梱しないのでインストール時にnpmが取得します。v0.2.2以降は`private`を解除し、`publishConfig.access: "public"`でnpmレジストリへ公開します。npmのバージョンは一度公開すると上書き・削除できないため、`npm publish --dry-run`で添付物を確認してから実行し、修正は新しいバージョンで行います。
+
+## npmへの公開
+
+```powershell
+npm publish --dry-run
+npm publish --access public
+npm view opencode-auto-reasoning version dist.tarball
+```
+
+名前の空き・公開権限・2FA・`files`の範囲を事前に確認します。2FAが有効な場合は対話ターミナルでワンタイムコードを入力する必要があるため、非対話シェルでは公開できないことがあります。GitHub Releaseのtgzとnpmのtarballは同じバージョン・同じ`package.json`・同じ`dist`から生成しますが、npmは`private`解除後のメタデータを含むため、バイト単位では一致しない場合があります。
 
 ## GitHubでのドラフト作成
 
@@ -57,7 +67,11 @@ package.jsonのバージョンと同じtag（例: `v0.1.0`）を作り、そのt
 ReleaseからtgzとSHA256SUMSをダウンロードし、SHA-256を確認してください。PowerShellでは `Get-FileHash <tgzのパス> -Algorithm SHA256` が使えます。
 
 ```powershell
-npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.2.1.tgz --ignore-scripts
+# npmレジストリから（推奨）
+npm install --prefix ./auto-reasoning-plugin opencode-auto-reasoning@0.2.2 --ignore-scripts
+
+# GitHub Releasesのtgzから（SHA-256照合後）
+npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.2.2.tgz --ignore-scripts
 ```
 
 OpenCodeの既存`plugins`へ、インストール先の `auto-reasoning-plugin/node_modules/opencode-auto-reasoning` の絶対パスを追加します。送信・費用を確認してから `allowModelRequests: true` にします。他の設定は [README](../README.md) を参照してください。

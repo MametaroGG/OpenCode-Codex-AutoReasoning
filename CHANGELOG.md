@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 — npm公開（2026-11-18）
+
+- npmレジストリへ`opencode-auto-reasoning@0.2.2`を公開。`private`を解除し、`publishConfig.access: "public"`を設定。ライセンスはMIT、公開対象は`dist`・README・CHANGELOG・`docs`・`examples`のみ。
+- READMEとリリースノートにnpmからのインストール手順を追加。GitHub Releasesの`.tgz`と`SHA256SUMS`も引き続き配布し、公開済みv0.1.0／v0.2.0／v0.2.1のタグ・添付ファイルは変更しない。
+- Lunaの精度は2026-11-08の44/48（91.7%）を参照。判定promptとJSON検証は測定時から変更していないが、判定実装のハッシュは異なる（既定タイムアウト3秒→15秒の変更）。同一コードでの再測定は行っていない。
+- テスト146件成功。型検査、ビルド、オフラインbenchmark、tarball検証、npm公開のdry-runも成功。監査警告はmoderate 23件・high 5件・criticalなし。
+
 ## 0.2.1 — 試用版（2026-11-18）
 
 - OpenAIカタログ98項目を確認し、reasoning effortを持つ32系列すべてにモデル別ポリシーを追加。複数ベンチマークで再検討した14系列（既存9系列の`benchmark-2026-11-09-r2`と新規5系列の`benchmark-2026-11-18-r2`）、思考量別sweepを1つだけ確認した7系列（`benchmark-2026-11-18-r1`）、残り11系列（`heuristic-2026-11-18`）を状態の`policy`で区別。

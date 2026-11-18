@@ -6,13 +6,13 @@
 
 GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effortを自動調整するOpenCode V2プラグイン。
 
-[![Preview v0.2.1](https://img.shields.io/badge/preview-v0.2.1-a78bfa?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.1)
+[![Preview v0.2.2](https://img.shields.io/badge/preview-v0.2.2-a78bfa?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.2)
 [![CI](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml)
 [![OpenCode V2](https://img.shields.io/badge/OpenCode-V2-18181b?style=flat-square)](https://opencode.ai/)
 [![Node.js 22+](https://img.shields.io/badge/Node.js-%3E%3D22-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-[ダウンロード](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.1) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
+[ダウンロード](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.2) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
 
 </div>
 
@@ -63,23 +63,29 @@ GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effort
 <a id="installation"></a>
 ### 2. インストール
 
-#### GitHub Releasesから（推奨）
+#### npmから（推奨）
 
-[v0.2.1 Preview](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.1)から、次の2ファイルをダウンロードします。
+```powershell
+npm install --prefix ./auto-reasoning-plugin opencode-auto-reasoning@0.2.2 --ignore-scripts
+```
 
-- `opencode-auto-reasoning-0.2.1.tgz`
+プラグインの場所は`auto-reasoning-plugin/node_modules/opencode-auto-reasoning`です。設定にはこのフォルダの**絶対パス**を使います。
+
+#### GitHub Releasesから
+
+[v0.2.2 Preview](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.2)から、次の2ファイルをダウンロードします。
+
+- `opencode-auto-reasoning-0.2.2.tgz`
 - `SHA256SUMS`
 
 PowerShellでSHA-256を計算し、`SHA256SUMS`の値と一致することを確認してからインストールしてください。
 
 ```powershell
-Get-FileHash ./opencode-auto-reasoning-0.2.1.tgz -Algorithm SHA256
-npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.2.1.tgz --ignore-scripts
+Get-FileHash ./opencode-auto-reasoning-0.2.2.tgz -Algorithm SHA256
+npm install --prefix ./auto-reasoning-plugin ./opencode-auto-reasoning-0.2.2.tgz --ignore-scripts
 ```
 
-プラグインの場所は`auto-reasoning-plugin/node_modules/opencode-auto-reasoning`です。設定にはこのフォルダの**絶対パス**を使います。
-
-**npmレジストリには未公開です。** パッケージ名だけを指定するインストールは使わないでください。
+GitHub Releasesのtgzもnpm公開版と同じ`package.json`・`dist`から生成しています。
 
 <details>
 <summary>ソースからビルドする場合</summary>
@@ -290,7 +296,7 @@ TUIで次のコマンドを実行します。コマンドパレットの**Auto R
 | Desktop・native TUI描画・WebSocket・長時間のツール継続 | **実機未検証** |
 | 実開発の品質・節約効果 | **未測定** |
 
-既知のSDK推移依存の監査警告があります。v0.2.1公開前の`npm audit --omit=dev`ではmoderate 23件、high 5件、criticalなしです。これはその時点のスナップショットであり、安全性を保証するものではありません。
+既知のSDK推移依存の監査警告があります。v0.2.2公開前の`npm audit --omit=dev`ではmoderate 23件、high 5件、criticalなしです。これはその時点のスナップショットであり、安全性を保証するものではありません。
 
 詳細：[ポリシー検証](docs/MODEL-POLICY-VALIDATION.md) · [実ホスト検証](docs/LIVE-HOST-VALIDATION.md) · [分類精度評価](docs/ACCURACY.md)
 
