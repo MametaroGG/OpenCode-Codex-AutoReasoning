@@ -19,7 +19,7 @@ GPT-6 Lunaが難易度を判定し、OpenAIのreasoning effortを自動調整す
 flowchart LR
     A[ユーザー指示] --> B[Lunaが難易度を判定]
     B --> C[モデルごとの<br/>思考量を選択]
-    C --> D[min/maxを適用]
+    C --> D[下限・上限を反映]
     D --> E[同じモデルへ送信]
 ```
 

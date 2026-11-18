@@ -19,7 +19,7 @@ An OpenCode V2 plugin that lets GPT-6 Luna classify task difficulty and automati
 flowchart LR
     A[Instruction] --> B[Luna classifies difficulty]
     B --> C[Select effort for<br/>the chosen model]
-    C --> D[Apply min/max]
+    C --> D[Clamp to limits]
     D --> E[Same model, new effort]
 ```
 
