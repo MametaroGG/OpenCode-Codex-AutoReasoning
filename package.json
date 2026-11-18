@@ -1,6 +1,6 @@
 {
-  "name": "opencode-codex-reasoning",
-  "version": "0.2.3",
+  "name": "opencode-codex-autoreasoning",
+  "version": "0.2.4",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

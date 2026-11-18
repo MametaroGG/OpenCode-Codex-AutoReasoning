@@ -1,8 +1,14 @@
 # Changelog
 
-## 0.2.3 — npm公開（正式名，2026-11-18）
+## 0.2.4 — npm公開（最終名，2026-11-18）
 
-- npmパッケージ名を`opencode-codex-reasoning`へ変更。0.2.2で使っていた`opencode-auto-reasoning`は誤りで、npmには同名の`0.0.0-stage`プレースホルダーだけが作られており、プラグイン本体は公開されていませんでした。0.2.2のGitHub Release・タグは公開済みのため変更せず、0.2.3として正式名で再公開します。
+- npmパッケージ名を最終名の`opencode-codex-autoreasoning`へ変更。`opencode-codex-reasoning`として用意した0.2.3もnpmには公開されず、この名前も空きでした。0.2.3のGitHub Release・タグは公開済みのため変更せず、0.2.4として再公開します。
+- `package.json`・lockfile・README・リリースノート・配布検証スクリプトの名前とインストール手順を更新。GitHub Releasesのtgz名も`opencode-codex-autoreasoning-0.2.4.tgz`です。
+- Lunaの精度・モデル別ポリシー・テスト146件の結果は変更なし。監査警告はmoderate 23件・high 5件・criticalなし。
+
+## 0.2.3 — npm公開準備（2026-11-18）
+
+- npmパッケージ名を`opencode-codex-reasoning`へ変更しましたが、**npm公開は完了していません**。0.2.2で使っていた`opencode-auto-reasoning`は誤りで、npmには同名の`0.0.0-stage`プレースホルダーだけが作られていました。0.2.2のGitHub Release・タグは公開済みのため変更しません。
 - `package.json`・lockfile・README・リリースノート・配布検証スクリプトのパッケージ名とインストール手順を更新。GitHub Releasesのtgz名も`opencode-codex-reasoning-0.2.3.tgz`になります。
 - Lunaの精度・モデル別ポリシー・テスト146件の結果は0.2.2から変更なし。監査警告はmoderate 23件・high 5件・criticalなし。
 

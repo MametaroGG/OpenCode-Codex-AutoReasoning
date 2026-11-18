@@ -1,7 +1,7 @@
 # v0.2.2 — npm公開準備（Preview）
 
 > [!NOTE]
-> この版ではパッケージ名を`opencode-auto-reasoning`としており、**プラグイン本体はnpmに公開されていません**。正式名は`opencode-codex-reasoning`で、npm公開は[v0.2.3](RELEASE-NOTES-v0.2.3.md)で行っています。以下のnpmインストール例は当時の誤った手順として残しています。
+> この版ではパッケージ名を`opencode-auto-reasoning`としており、**プラグイン本体はnpmに公開されていません**。正式名は`opencode-codex-autoreasoning`で、npm公開は[v0.2.4](RELEASE-NOTES-v0.2.4.md)で行います。以下のnpmインストール例は当時の誤った手順として残しています。
 
 OpenCode V2向けの自動思考量調整プラグインの試用版です。GPT-6 Lunaが課題の難易度を判定し、ユーザーが選んだOpenAI開発モデルに応じて思考量を選びます。開発モデル自体は変更しません。npm公開は行われていません（上の注記を参照）。
 

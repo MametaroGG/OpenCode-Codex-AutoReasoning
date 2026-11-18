@@ -31,17 +31,17 @@ try {
   await writeFile(path.join(consumer, "package-lock.json"), JSON.stringify(lock));
   // Offline install deliberately forbids network access and dependency lifecycle scripts.
   run([npm, "install", "--offline", "--ignore-scripts", "--no-audit", "--no-fund", "--omit=optional", "--omit=dev", archive], consumer);
-  const installed = JSON.parse(await readFile(path.join(consumer, "node_modules/opencode-codex-reasoning/package.json"), "utf8"));
+  const installed = JSON.parse(await readFile(path.join(consumer, "node_modules/opencode-codex-autoreasoning/package.json"), "utf8"));
   if (installed.license !== "MIT") throw new Error("Missing MIT metadata");
-  const license = await readFile(path.join(consumer, "node_modules/opencode-codex-reasoning/LICENSE"), "utf8");
+  const license = await readFile(path.join(consumer, "node_modules/opencode-codex-autoreasoning/LICENSE"), "utf8");
   if (!license.startsWith("MIT License")) throw new Error("Missing MIT license in package");
-  await readFile(path.join(consumer, "node_modules/opencode-codex-reasoning", installed.exports["./tui"]));
-  const classifierTypesOnly = await readFile(path.join(consumer, "node_modules/opencode-codex-reasoning/dist/classifier.js"), "utf8");
+  await readFile(path.join(consumer, "node_modules/opencode-codex-autoreasoning", installed.exports["./tui"]));
+  const classifierTypesOnly = await readFile(path.join(consumer, "node_modules/opencode-codex-autoreasoning/dist/classifier.js"), "utf8");
   if (classifierTypesOnly.includes("localClassifier")) throw new Error("Local classifier leaked into distribution");
   const script = `
     import assert from 'node:assert/strict';
-    import plugin from 'opencode-codex-reasoning';
-    import { AutoReasoning } from 'opencode-codex-reasoning/rpc';
+    import plugin from 'opencode-codex-autoreasoning';
+    import { AutoReasoning } from 'opencode-codex-autoreasoning/rpc';
     let callback; let promptCallback; let status; let disposed = 0; let modelCalls = 0;
     const registration = { dispose: async () => { disposed++; } };
     const ctx = {
