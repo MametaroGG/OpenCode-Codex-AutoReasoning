@@ -160,6 +160,64 @@ for (const [modelID, expected] of [
     assert.equal(h.modelCalls, 4); await cleanup!();
   });
 }
+const effortOrder = ["minimal", "low", "medium", "high", "xhigh", "max"] as const;
+function effectiveEffort(desired: string, levels: readonly string[]): string {
+  const target = effortOrder.indexOf(desired as (typeof effortOrder)[number]);
+  return levels.find(level => effortOrder.indexOf(level as (typeof effortOrder)[number]) >= target)
+    ?? levels.at(-1)!;
+}
+const frontier = ["low", "medium", "high", "xhigh"] as const;
+const compact = ["low", "low", "medium", "high"] as const;
+for (const [modelID, expected, levels, suffixes] of [
+  ["gpt-6.2-sol", frontier, ["low", "medium", "high", "xhigh", "max"], ["", "-fast", "-pro", "-ultrafast"]],
+  ["gpt-6.2-astra", frontier, ["low", "medium", "high", "xhigh", "max"], ["", "-fast", "-pro", "-ultrafast"]],
+  ["gpt-6-cyber", frontier, ["low", "medium", "high", "xhigh", "max"], [""]],
+  ["gpt-daybreak-red-latest", frontier, ["low", "medium", "high", "xhigh", "max"], [""]],
+  ["gpt-5.6-cyber", frontier, ["low", "medium", "high", "xhigh", "max"], [""]],
+  ["gpt-daybreak-blue-latest", frontier, ["low", "medium", "high", "xhigh", "max"], [""]],
+  ["gpt-5.6", frontier, ["low", "medium", "high", "xhigh", "max"], ["", "-fast", "-pro"]],
+  ["gpt-5.5-pro", frontier, ["medium", "high", "xhigh"], [""]],
+  ["gpt-5.4-pro", frontier, ["medium", "high", "xhigh"], [""]],
+  ["gpt-5.4", frontier, ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"]],
+  ["gpt-5.4-mini", compact, ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"]],
+  ["gpt-5.4-nano", compact, ["low", "medium", "high", "xhigh"], ["", "-flex"]],
+  ["gpt-5.3-codex", frontier, ["low", "medium", "high", "xhigh"], ["", "-fast"]],
+  ["gpt-5.3-codex-spark", compact, ["low", "medium", "high", "xhigh"], [""]],
+  ["gpt-5.2-pro", frontier, ["medium", "high", "xhigh"], [""]],
+  ["gpt-5.2", frontier, ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"]],
+  ["gpt-5.1", frontier, ["low", "medium", "high"], ["", "-fast", "-flex"]],
+  ["gpt-5-pro", frontier, ["high"], [""]],
+  ["gpt-5", frontier, ["low", "medium", "high"], ["", "-fast", "-flex"]],
+  ["gpt-5-mini", compact, ["low", "medium", "high"], ["", "-fast", "-flex"]],
+  ["gpt-5-nano", compact, ["low", "medium", "high"], ["", "-flex"]],
+  ["o3-pro", frontier, ["low", "medium", "high"], [""]],
+  ["o3", frontier, ["low", "medium", "high"], ["", "-fast", "-flex"]],
+] as const) {
+  test(`heuristic policy reaches the context hook for all catalog tiers: ${modelID}`, async () => {
+    const development = { id: modelID as string, modelID, providerID: "openai", settings: { reasoningEffort: levels[0] },
+      variants: levels.map(e => ({ id: e, settings: { reasoningEffort: e } })) };
+    const h = harness({}, levels[0], development); const cleanup = await setup(h.ctx);
+    for (const [i, difficulty] of (["Very Low", "Low", "High", "Very High"] as const).entries()) {
+      h.modelResponse(JSON.stringify({ difficulty, reasons: ["limited-or-unknown-scope"] }));
+      for (const [j, suffix] of suffixes.entries()) {
+        development.id = `${modelID}${suffix}`;
+        const e = h.event(`heuristic task ${i}`, `heuristic-${i}`);
+        const identity = JSON.stringify(e.model);
+        await h.apply(e);
+        const snapshot = await h.status(`heuristic-${i}`);
+        const desired = expected[i]!;
+        const selected = effectiveEffort(desired, levels);
+        assert.equal(snapshot.status.requestedEffort, desired);
+        assert.equal(snapshot.status.effort, selected);
+        assert.equal(snapshot.status.policy, `heuristic-2026-11-18:${modelID}`);
+        assert.equal(snapshot.status.cacheHit, j > 0);
+        assert.equal(e.options.reasoningEffort ?? levels[0], selected);
+        assert.equal(JSON.stringify(e.model), identity);
+      }
+    }
+    assert.equal(h.modelCalls, 4); await cleanup!();
+  });
+}
 for (const [providerID, low, high] of [
   ["anthropic", { effort: "low", thinking: { type: "adaptive" } }, { effort: "high", thinking: { type: "adaptive" } }],
   ["amazon-bedrock", { effort: "low" }, { effort: "high" }],

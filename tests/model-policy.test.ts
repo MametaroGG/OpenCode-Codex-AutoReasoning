@@ -4,6 +4,9 @@ import { modelEffort } from "../src/model-policy.js";
 import { defaults, parseConfig } from "../src/config.js";
 
 const difficulties = ["Very Low", "Low", "High", "Very High"] as const;
+const frontier = ["low", "medium", "high", "xhigh"] as const;
+const compact = ["low", "low", "medium", "high"] as const;
+
 for (const [modelID, expected] of [
   ["gpt-6-astra", ["low", "low", "medium", "xhigh"]],
   ["gpt-6.1-sol", ["low", "medium", "high", "xhigh"]],
@@ -21,13 +24,68 @@ for (const [modelID, expected] of [
     assert.equal(modelEffort({ modelID }, "Very High", { modelPolicy: "common" }).effort, "xhigh");
   });
 }
+
+for (const [modelID, expected] of [
+  ["gpt-6.2-sol", frontier],
+  ["gpt-6.2-astra", frontier],
+  ["gpt-6-cyber", frontier],
+  ["gpt-daybreak-red-latest", frontier],
+  ["gpt-5.6-cyber", frontier],
+  ["gpt-daybreak-blue-latest", frontier],
+  ["gpt-5.6", frontier],
+  ["gpt-5.5-pro", frontier],
+  ["gpt-5.4-pro", frontier],
+  ["gpt-5.4", frontier],
+  ["gpt-5.3-codex", frontier],
+  ["gpt-5.2-pro", frontier],
+  ["gpt-5.2", frontier],
+  ["gpt-5.1", frontier],
+  ["gpt-5-pro", frontier],
+  ["gpt-5", frontier],
+  ["o3-pro", frontier],
+  ["o3", frontier],
+  ["gpt-5.4-mini", compact],
+  ["gpt-5.4-nano", compact],
+  ["gpt-5.3-codex-spark", compact],
+  ["gpt-5-mini", compact],
+  ["gpt-5-nano", compact],
+] as const) {
+  test(`versioned heuristic policy: ${modelID}`, () => {
+    assert.deepEqual(difficulties.map(d => modelEffort({ modelID }, d, defaults).effort), expected);
+    assert.equal(modelEffort({ modelID }, "High", defaults).policy, `heuristic-2026-11-18:${modelID}`);
+    assert.equal(modelEffort({ modelID }, "Very High", { modelPolicy: "common" }).effort, "xhigh");
+  });
+}
+
+test("every reasoning-capable catalog family has a named policy", () => {
+  const covered = [
+    "gpt-6.2-sol", "gpt-6.2-astra", "gpt-6-cyber", "gpt-6.1-terra", "gpt-6.1-sol",
+    "gpt-6-luna", "gpt-6-sol", "gpt-6-astra", "gpt-daybreak-red-latest", "gpt-5.6-cyber",
+    "gpt-daybreak-blue-latest", "gpt-5.6-sol", "gpt-5.6", "gpt-5.6-terra", "gpt-5.6-luna",
+    "gpt-5.5-pro", "gpt-5.5", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.4-pro", "gpt-5.4",
+    "gpt-5.3-codex", "gpt-5.3-codex-spark", "gpt-5.2", "gpt-5.2-pro", "gpt-5.1",
+    "gpt-5-pro", "gpt-5", "gpt-5-mini", "gpt-5-nano", "o3-pro", "o3",
+  ];
+  for (const modelID of covered) {
+    assert.doesNotMatch(modelEffort({ modelID }, "High", defaults).policy, /^common/);
+  }
+});
+
 test("unknown identities use common policy without name guessing", () => {
   for (const modelID of [
-    "unknown", "gpt-6.1-terra-fast", "constructor", "__proto__", undefined]) {
+    "unknown", "gpt-6.1-terra-fast", "gpt-6.2-sol-fast", "gpt-5.6-pro", "constructor", "__proto__", undefined]) {
     assert.deepEqual(difficulties.map(d => modelEffort({ modelID }, d, defaults).effort), ["low", "medium", "high", "xhigh"]);
     assert.equal(modelEffort({ modelID }, "High", defaults).policy, "common:no-model-evidence");
   }
 });
+
+test("models without reasoning variants remain outside the policy table", () => {
+  for (const modelID of [
+    "chat-latest", "gpt-audio-1.5", "gpt-5-search-api", "gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"]) {
+    assert.equal(modelEffort({ modelID }, "High", defaults).policy, "common:no-model-evidence");
+  }
+});
+
 test("policy and max config validation; none remains explicit-variant/request only", () => {
   assert.equal(parseConfig({ manualOverride: "max" }).manualOverride, "max");
   assert.equal(parseConfig({ maxEffort: "xhigh" }).maxEffort, "xhigh");

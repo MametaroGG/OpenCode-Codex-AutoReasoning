@@ -1,26 +1,36 @@
-# モデル別ポリシー変更の検証（2026-11-09）
+# モデル別ポリシー変更の検証（2026-11-18）
 
-複数ベンチマーク比較によるr2適用後、下記の全コマンドを再実行して成功しました。98件のテストには全9系列の更新後の表が含まれます。6.1 Solのモデル変更／キャッシュ再利用テストも新しいxhigh要求値へ更新しました。状態のポリシー版は`benchmark-2026-11-09-r2`です。[比較・修正理由](MULTI-BENCHMARK-REVIEW.md)を参照してください。
-
-v0.2.0に含む変更に対するローカル・オフライン検証です。公開済みv0.1.0のタグ・配布物は変更していません。
+2026-11-18のカタログ拡張後、下記の全コマンドを再実行して成功しました。reasoning effortを持つ32系列を、公開測定に基づく9系列（`benchmark-2026-11-09-r2`）とヒューリスティック23系列（`heuristic-2026-11-18`）に分けて検証しています。[ポリシーと根拠の区別](MODEL-POLICIES.md)を参照してください。
 
 | 検証 | 結果 |
 |---|---|
 | npm run typecheck | 成功 |
-| npm test | 98件成功、失敗なし |
-| npm run build | verify:package内で実行、成功 |
+| npm test | 146件成功、失敗なし |
+| npm run build | 成功 |
 | npm run benchmark | 成功。固定応答の検証・キャッシュ・保持上限のみ |
 | npm run verify:package | オフラインで実tarballをインストールし、モックホスト検証成功 |
 | git diff --check | 成功 |
 
-v0.2.0公開前にも全検証を再実行して成功。npm auditはmoderate 24件、high/criticalなし。新しい依存の追加・更新は行っていません。
+## カタログ確認
 
-追加した検証：9個別表の全難易度、未知IDの共通fallback、common選択、設定検証、maxのカタログ確認、旧xhigh上限、非対応maxの代替、min制約、Fastの実API modelID解決とモデル保持、モデル変更時のキャッシュ再利用、手動max、明示none variant・request override保持、状態の推奨値／制約後値の表示。
+2026-11-18に実行中OpenCodeの`GET /api/model`と`opencode models`を確認しました。OpenAIの有効なカタログ項目は98件で、そのうちreasoning effortを持つAPI `modelID`は32件です。Fast／Flex／Pro／Ultrafastは独立したAPIモデルではなく、同じ`modelID`を共有する別名でした。例えば次のとおりです。
 
-全9系列それぞれについて、通常／FastのカタログID×4難易度（計72組合せ）を実際のcontext hookコールバックで検証しています。5.5はmaxなしのカタログを使い、非対応maxを要求しないことを確認。通常→Fast変更で同じ難易度のキャッシュを再利用します。開発用6 Lunaが判定用Lunaと同じカタログ項目になる場合も含めています。これはモックによる配線検証で、実送信や分類精度の測定ではありません。
+- `gpt-6.2-sol`／`-fast`／`-pro`／`-ultrafast` → `gpt-6.2-sol`
+- `gpt-6.1-terra`／`-fast`／`-flex`／`-pro` → `gpt-6.1-terra`
+- `gpt-5.6`／`-fast`／`-pro` → `gpt-5.6`（`gpt-5.6-sol`ではない）
+- `gpt-5.5-pro`、`gpt-daybreak-blue-latest`、`gpt-daybreak-red-latest`は独立ID
+
+ポリシーはこの`modelID`を完全一致で引きます。`-fast`等の末尾を削る推測は行いません。
+
+## テスト範囲
+
+- 測定9系列：各4難易度の値と`benchmark-2026-11-09-r2:<modelID>`を検証。通常／Fastのcontext hook配線、キャッシュ再利用、モデル変更を含みます。
+- ヒューリスティック23系列：frontier／compactの各4難易度、`heuristic-2026-11-18:<modelID>`、主要なFast／Flex／Pro／Ultrafast別名、カタログ上限によるクランプを検証。
+- frontierの18系列、compactの5系列、合計32系列が`common`へ落ちないことを検証。
+- reasoning variantを持たない`chat-latest`、`gpt-audio-1.5`、`gpt-5-search-api`、GPT-4.1／GPT-4o系は、自動選択の対象外であることを検証。
+- Pro系のmedium下限、`gpt-5.1`／`gpt-5`／`gpt-5-mini`／`gpt-5-nano`／`o3`／`o3-pro`のhigh上限、`gpt-5-pro`のhigh固定など、カタログに合わせた切上げを検証。
+- 未知ID（`gpt-6.1-terra-fast`、`gpt-6.2-sol-fast`等をmodelIDとして直接渡すケースを含む）は`common:no-model-evidence`のまま。
 
 従来の非OpenAI除外・判定失敗時の保持・明示variant・既存override・cleanup等の回帰テストも成功しています。依存関係のdeprecated警告は継続しています。
 
-**実モデル呼び出しは0回**です。以前のLuna/Sol実ホスト記録は旧共通表の検証であり、新しい表・max送信・モデル別品質・節約の検証ではありません。今回の98件はLuna分類精度や推奨表の最適性の証拠ではありません。Desktop/native TUI描画も未検証です。
-
-対応表と公開測定の出典・限界は[MODEL-POLICIES.md](MODEL-POLICIES.md)を参照してください。
+**実モデル呼び出しは0回**です。146件はLuna分類精度、ヒューリスティック表の最適性、実送信、節約効果の証拠ではありません。Desktop／native TUI描画も未検証です。新しい一次ベンチマークが公開された系列は、測定行へ昇格させるか表を改訂してください。

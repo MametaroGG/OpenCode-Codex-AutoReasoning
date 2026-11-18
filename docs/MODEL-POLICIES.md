@@ -1,10 +1,14 @@
-# モデル別思考量ポリシー（2026-11-09、r2）
+# モデル別思考量ポリシー（2026-11-18、測定9系列・ヒューリスティック23系列）
 
 ## 実装と根拠の区別
 
-Lunaは課題の難易度だけを分類し、その後、開発用モデルのカタログ`modelID`で対応表を選びます。判定prompt・JSON検証は変更していません。**以下は公開測定を参考に設計した暫定方針であり、難易度別の最適値を実証した表ではありません。** この変更で追加の実モデル呼び出しは行っていません。
+Lunaは課題の難易度だけを分類し、その後、開発用モデルのカタログ`modelID`で対応表を選びます。判定prompt・JSON検証は変更していません。**以下は公開測定または能力クラスを参考に設計した暫定方針であり、難易度別の最適値を実証した表ではありません。** この変更で追加の実モデル呼び出しは行っていません。
 
-VulcanBenchに加え、Datacurve DeepSWE、Artificial Analysisの個別coding評価、Hex DataBench等を比較し、3セルを更新しました。[複数ベンチマークの比較・維持／変更理由](MULTI-BENCHMARK-REVIEW.md)がr2の根拠です。
+2026-11-18時点のOpenAIカタログ98項目を確認し、reasoning effortを持つ32のAPI `modelID`をすべて収録しました。内訳は、公開測定を参照した9系列（`benchmark-2026-11-09-r2`）と、公開された思考量sweepがない23系列（`heuristic-2026-11-18`）です。**ヒューリスティック行はベンチマーク結果ではなく、能力クラスに基づく暫定方針です。** 状態の`policy`欄で両者を区別できます。
+
+### 公開測定に基づく9系列
+
+VulcanBenchに加え、Datacurve DeepSWE、Artificial Analysisの個別coding評価、Hex DataBench等を比較しました。[複数ベンチマークの比較・維持／変更理由](MULTI-BENCHMARK-REVIEW.md)がr2の根拠です。
 
 | API modelID | Very Low | Low | High | Very High |
 |---|---|---|---|---|
@@ -18,9 +22,61 @@ VulcanBenchに加え、Datacurve DeepSWE、Artificial Analysisの個別coding評
 | gpt-5.6-luna | low | high | xhigh | max |
 | gpt-5.5 | low | high | xhigh | xhigh |
 
-一覧の9系列はすべて、それぞれの一次報告を参照した個別ポリシーを持ちます。共通表への自動fallbackは未知モデル・API ID不明だけです。同じ対応表になる系列も、別々の測定に基づいて採用しています。世代や名称の類似だけで結果を流用しません。
+一覧の9系列はすべて、それぞれの一次報告を参照した個別ポリシーを持ちます。同じ対応表になる系列も、別々の測定に基づいて採用しています。世代や名称の類似だけで結果を流用しません。
 
-Fast版もカタログのAPI modelIDが同じ場合のみ同じ表になります。`-fast`という名前からの推測や、開発モデルの切替は行いません。速度・利用枠が同じという意味ではありません。
+### ヒューリスティック23系列
+
+公開された思考量別の一次評価を確認できない系列は、能力クラスに基づく2種類の暫定表で明示的に収録します。未知IDの共通表へ黙って落とすのではなく、モデル名ごとに方針を固定するための措置です。
+
+| API modelID | クラス | Very Low | Low | High | Very High |
+|---|---|---|---|---|---|
+| gpt-6.2-sol | frontier | low | medium | high | xhigh |
+| gpt-6.2-astra | frontier | low | medium | high | xhigh |
+| gpt-6-cyber | frontier | low | medium | high | xhigh |
+| gpt-daybreak-red-latest | frontier | low | medium | high | xhigh |
+| gpt-5.6-cyber | frontier | low | medium | high | xhigh |
+| gpt-daybreak-blue-latest | frontier | low | medium | high | xhigh |
+| gpt-5.6 | frontier | low | medium | high | xhigh |
+| gpt-5.5-pro | frontier | low | medium | high | xhigh |
+| gpt-5.4-pro | frontier | low | medium | high | xhigh |
+| gpt-5.4 | frontier | low | medium | high | xhigh |
+| gpt-5.3-codex | frontier | low | medium | high | xhigh |
+| gpt-5.2-pro | frontier | low | medium | high | xhigh |
+| gpt-5.2 | frontier | low | medium | high | xhigh |
+| gpt-5.1 | frontier | low | medium | high | xhigh |
+| gpt-5-pro | frontier | low | medium | high | xhigh |
+| gpt-5 | frontier | low | medium | high | xhigh |
+| o3-pro | frontier | low | medium | high | xhigh |
+| o3 | frontier | low | medium | high | xhigh |
+| gpt-5.4-mini | compact | low | low | medium | high |
+| gpt-5.4-nano | compact | low | low | medium | high |
+| gpt-5.3-codex-spark | compact | low | low | medium | high |
+| gpt-5-mini | compact | low | low | medium | high |
+| gpt-5-nano | compact | low | low | medium | high |
+
+- **frontier**：新しい上位系列とPro系。Very Highでも`max`を自動選択せず`xhigh`に留め、未測定の待ち時間・利用枠消費を避けます。必要なら`manualOverride: "max"`で明示できます。
+- **compact**：mini / nano / spark系。通常の編集で上位思考量を使いすぎないよう、`high`を上限にします。カタログが`xhigh`や`max`に対応していても、この表では自動選択しません。
+
+**ヒューリスティック行の根拠は、モデル名・カタログ上のfamily・公開されている位置付けだけです。** 個別の思考量別成功率、難易度別の最適値、実利用での費用対効果を測定したものではありません。また、GPT-6.2 Sol／AstraについてはArtificial Analysis等で思考量別の集計値が公開されていますが、4難易度の課題層別sweepではないため、集計Indexから難易度別の最適値を逆算していません。VulcanBenchの確認した最新一覧にもGPT-6.2の行はありませんでした。
+
+## API modelIDとサービス階層
+
+ポリシーはカタログの表示名ではなく、API `modelID`で引きます。2026-11-18に実行中OpenCodeのカタログAPI（`GET /api/model`）で確認したところ、Fast／Flex／Pro／Ultrafastは独立したAPIモデルではなく、同じ`modelID`を共有するカタログ別名でした。
+
+| カタログ表示 | API modelID |
+|---|---|
+| gpt-6.2-sol / -fast / -pro / -ultrafast | gpt-6.2-sol |
+| gpt-6.2-astra / -fast / -pro / -ultrafast | gpt-6.2-astra |
+| gpt-6.1-terra / -fast / -flex / -pro | gpt-6.1-terra |
+| gpt-6.1-sol / -fast / -flex / -pro / -ultrafast | gpt-6.1-sol |
+| gpt-5.6 / -fast / -pro | gpt-5.6 |
+| gpt-5.6-sol / -fast / -flex / -pro | gpt-5.6-sol |
+| gpt-5.5 / -fast / -flex | gpt-5.5 |
+| gpt-5.5-pro | gpt-5.5-pro（独立ID） |
+| gpt-daybreak-blue-latest | gpt-daybreak-blue-latest（独立ID） |
+| gpt-daybreak-red-latest | gpt-daybreak-red-latest（独立ID） |
+
+`gpt-5.6`は`gpt-5.6-sol`へ、Daybreakは別モデルへ自動で読み替えません。`-fast`等の末尾を削って推測することもしません。カタログAPIが返す`modelID`がそのまま対応表のキーです。速度・利用枠・課金条件が同じという意味ではありません。
 
 ## 採用した公開測定
 
@@ -62,14 +118,15 @@ Fast版もカタログのAPI modelIDが同じ場合のみ同じ表になりま�
 
 課金値はAPI換算推定で、実際のサブスク請求ではありません。Lunaのtimeout分の費用は欠落しており総費用には使えません。OpenCodeとCodexのharnessは異なります。r2では複数の独立評価を比較しましたが、節約・精度・開発品質の改善を本プラグインで実測したものではありません。
 
+**ヒューリスティック23系列には、そもそもこの種の思考量別測定がありません。** クラス分けは公開情報とカタログ上の位置付けによる設計判断で、最適性・費用・待ち時間を保証しません。新しい一次評価が公開された場合は、測定行へ昇格させるか表を改訂してください。
+
 ## 互換性・制御
 
-- `modelPolicy: "benchmark"`が新しい既定。`"common"`で従来の共通表へ戻せます。
-- `maxEffort`の既定は`xhigh`から`max`へ変更。明示的な旧上限`"xhigh"`はそのまま有効です。意図せずmaxを許可したくない場合は上限を明記してください。
-- ポリシー適用後に、実カタログの対応思考量とmin/maxを適用します。範囲内で切り上げ、なければ範囲内の最大対応値。例：max非対応ならxhighへ。範囲内の対応値がなければ変更しません。
+- `modelPolicy: "benchmark"`では、測定9系列とヒューリスティック23系列の両方を使います。`"common"`で従来の共通表へ戻せます。
+- 状態の`policy`は、測定行が`benchmark-2026-11-09-r2:<modelID>`、ヒューリスティック行が`heuristic-2026-11-18:<modelID>`、未知IDが`common:no-model-evidence`です。
+- `maxEffort`の既定は`xhigh`から`max`へ変更済みです。ヒューリスティック行は`max`を自動選択しませんが、`manualOverride`や`minEffort`/`maxEffort`の設定は通常どおり適用されます。
+- ポリシー適用後に、実カタログの対応思考量とmin/maxを適用します。範囲内で切り上げ、なければ範囲内の最大対応値。例：max非対応ならxhigh、Pro系でlow要求ならmediumへ。範囲内の対応値がなければ変更しません。
 - `none`は自動選択・プラグイン設定の対象外。明示variantや既存request overrideの`none`は保持します。既存`minimal`対応は維持します。
 - 手動指定、明示variant、既存request override、非OpenAI除外、失敗時の元設定保持の優先順位は変更しません。
 - 難易度のキャッシュは開発モデルと独立。モデル変更時は同じ難易度から表を再適用し、キャッシュだけを理由に追加判定しません。
-- 状態の`policy`は表の版・適用モデル／共通fallbackを示します。`requestedEffort`は制約適用前、`effort`は適用後。どちらも最終HTTP送信値の観測ではありません。
-
-公開済みv0.1.0にはこの変更は含まれません。v0.2.0 Pre-releaseから含まれます。
+- `requestedEffort`は制約適用前、`effort`は適用後。どちらも最終HTTP送信値の観測ではありません。
