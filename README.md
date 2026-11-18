@@ -161,7 +161,7 @@ GPT-6 Lunaが難易度を判定
 `根拠`列の**r2**は複数の独立評価を比較した`benchmark-2026-11-09-r2`、**2026-11-18**は思考量別sweepを追加確認した`benchmark-2026-11-18-r1`です。どちらも4難易度ラベル別の最適値を実証した表ではありません。
 
 | 開発モデル | Very Low | Low | High | Very High | 根拠 |
-|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|
 | GPT-6.1 Sol | low | medium | high | xhigh | r2 |
 | GPT-6.1 Terra | low | high | xhigh | max | r2 |
 | GPT-6 Astra | low | low | medium | xhigh | r2 |
