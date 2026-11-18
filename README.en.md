@@ -18,7 +18,7 @@ An OpenCode V2 plugin that lets GPT-6 Luna classify task difficulty and automati
 ```mermaid
 flowchart LR
     A[Instruction] --> B[Luna classifies difficulty]
-    B --> C[Apply model policy]
+    B --> C[Select effort for<br/>the chosen model]
     C --> D[Apply min/max]
     D --> E[Same model, new effort]
 ```

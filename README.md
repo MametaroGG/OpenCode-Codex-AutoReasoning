@@ -18,7 +18,7 @@ GPT-6 Lunaが難易度を判定し、OpenAIのreasoning effortを自動調整す
 ```mermaid
 flowchart LR
     A[ユーザー指示] --> B[Lunaが難易度を判定]
-    B --> C[モデル別の表を適用]
+    B --> C[モデルごとの<br/>思考量を選択]
     C --> D[min/maxを適用]
     D --> E[同じモデルへ送信]
 ```
