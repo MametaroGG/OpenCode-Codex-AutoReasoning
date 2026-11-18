@@ -16,9 +16,9 @@ export const AutoReasoning = Rpc.define({
         properties: {
           status: { type: "object" }, metrics: { type: "object" },
           usage: { type: ["object", "null"] }, retained: { type: "object" },
-          classifier: { type: "object" },
+          classifier: { type: "object" }, measurement: { type: "object" },
         },
-        required: ["status", "metrics", "usage", "retained", "classifier"], additionalProperties: false,
+        required: ["status", "metrics", "usage", "retained", "classifier", "measurement"], additionalProperties: false,
       },
     },
   },

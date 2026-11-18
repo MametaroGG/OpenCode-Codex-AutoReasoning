@@ -445,3 +445,21 @@ test("local default effort does not override a model's explicit difficulty asses
   const e = h.event("未知の難しい課題"); h.admit(e, "未知の難しい課題"); await h.apply(e);
   assert.equal(e.options.reasoningEffort, "high"); await cleanup!();
 });
+
+test("optional local measurement records decisions without prompt text and stays read-only", async () => {
+  const h = harness({ engine: "model", allowModelRequests: true, measurement: true }); const cleanup = await setup(h.ctx);
+  h.modelResponse('{"difficulty":"Very High","reasons":["architecture-design"]}');
+  const e = h.event("PRIVATE_TASK_TEXT_FOR_MEASUREMENT"); h.admit(e, "PRIVATE_TASK_TEXT_FOR_MEASUREMENT");
+  await h.apply(e);
+  const snapshot = await h.status();
+  assert.equal(snapshot.measurement.enabled, true);
+  assert.equal(snapshot.measurement.decisions.length, 1);
+  const record = snapshot.measurement.decisions[0];
+  assert.equal(record.difficulty, "Very High");
+  assert.equal(record.effort, "xhigh");
+  assert.equal(record.modelID, "test-model");
+  assert.equal(record.mutated, true);
+  assert.doesNotMatch(JSON.stringify(snapshot.measurement), /PRIVATE_TASK_TEXT_FOR_MEASUREMENT|s1/);
+  assert.deepEqual(await h.rpcStatus(), snapshot);
+  await cleanup!();
+});

@@ -21,6 +21,13 @@ export function formatStatus(value: unknown): string {
       (snapshot.metrics as Record<string, unknown>).additionalTokens === null) {
     lines.push("判定トークン使用量: 不明（SDKから未提供。0ではありません）");
   }
+  if (snapshot.measurement && typeof snapshot.measurement === "object") {
+    const m = snapshot.measurement as Record<string, unknown>;
+    if (m.enabled === true) {
+      const retained = m.retained && typeof m.retained === "object" ? m.retained as Record<string, unknown> : {};
+      lines.push(`ローカル計測: 判定${typeof retained.decisions === "number" ? retained.decisions : 0}件 / 使用量${typeof retained.usage === "number" ? retained.usage : 0}件（外部送信なし）`);
+    }
+  }
   lines.push("\nこの表示は履歴・モデル設定・判定値を変更しません。最終送信値を保証するものではありません。");
   return lines.join("\n");
 }

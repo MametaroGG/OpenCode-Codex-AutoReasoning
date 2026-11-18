@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { Cache } from "./cache.js";
 import { isEffort, type Config, type Effort } from "./config.js";
 import { type Classifier, type Decision, type Task } from "./classifier.js";
+import { MeasurementLog, measurementDisabled, sessionRef, type DecisionRecord, type UsageRecord } from "./measurement.js";
 
 export interface Assessment {
   decision?: Decision;
@@ -27,11 +28,19 @@ export class Controller {
   readonly statuses: Cache<Status>;
   readonly usage: Cache<unknown>;
   readonly metrics = { classifications: 0, cacheHits: 0, failures: 0, durationMs: 0, additionalTokens: 0 as number | null };
+  private readonly measurement: MeasurementLog | null;
   private closed = false;
   constructor(readonly config: Config, private engine: Classifier) {
     this.cache = new Cache(config.maxEntries, config.cacheTtlMs);
     this.statuses = new Cache(config.maxEntries, config.cacheTtlMs);
     this.usage = new Cache(config.maxEntries, config.cacheTtlMs);
+    this.measurement = config.measurement ? new MeasurementLog(config.maxEntries) : null;
+  }
+  recordDecision(sessionID: string, record: Omit<DecisionRecord, "session">): void {
+    if (this.measurement && !this.closed) this.measurement.decision({ ...record, session: sessionRef(sessionID) });
+  }
+  recordUsage(sessionID: string, record: Omit<UsageRecord, "session">): void {
+    if (this.measurement && !this.closed) this.measurement.observed({ ...record, session: sessionRef(sessionID) });
   }
   async assess(sessionID: string, taskID: string, task: Task): Promise<Assessment> {
     const key = createHash("sha256").update(JSON.stringify([sessionID, taskID, this.engine.id, task])).digest("hex");
@@ -92,11 +101,13 @@ export class Controller {
     return { status: this.statuses.get(sessionID) ?? { reason: "not-assessed" },
       classifier: { id: this.engine.id, modelUsage: this.engine.statistics?.() ?? null },
       metrics: { ...this.metrics }, usage: this.usage.get(sessionID) ?? null,
+      measurement: this.measurement?.snapshot() ?? measurementDisabled,
       retained: { cache: this.cache.size, pending: this.pending.size, sessions: this.statuses.size, usage: this.usage.size } };
   }
   close(): void {
     this.closed = true;
     for (const abort of this.aborts) abort.abort();
     this.cache.clear(); this.statuses.clear(); this.usage.clear(); this.pending.clear();
+    this.measurement?.clear();
   }
 }

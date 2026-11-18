@@ -20,7 +20,9 @@
         "timeoutMs": 15000,
         "cacheTtlMs": 1800000,
         "maxEntries": 256,
-        "debug": false
+        "debug": false,
+        // Local-only bounded evidence records. Set true to collect decisions and host usage.
+        "measurement": false
       }
     }
   ]

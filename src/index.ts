@@ -66,12 +66,26 @@ export async function setup(ctx: Plugin.Context) {
     if (!selected) { status("no-effort-in-configured-range"); return; }
     const variant = event.model.variant ? model.variants.find(v => v.id === event.model.variant) : undefined;
     const current = variant?.settings?.reasoningEffort ?? model.settings?.reasoningEffort;
-    controller.statuses.set(event.sessionID, { effort: selected,
+    const nextStatus = { effort: selected,
       requestedEffort: desired, policy: config.manualOverride ? "manual" : recommendation?.policy ?? "default",
       reason: config.manualOverride ? "manual-override" : "model-assessment",
       difficulty: decision?.difficulty, reasons: decision?.reasons,
       ...(decision?.classifierModel ? { classifierModel: decision.classifierModel } : {}),
-      cacheHit: assessment?.cacheHit, durationMs: assessment?.durationMs });
+      cacheHit: assessment?.cacheHit, durationMs: assessment?.durationMs };
+    controller.statuses.set(event.sessionID, nextStatus);
+    if (config.measurement) controller.recordDecision(event.sessionID, {
+      at: new Date().toISOString(),
+      difficulty: decision?.difficulty ?? null,
+      requestedEffort: desired,
+      effort: selected,
+      policy: nextStatus.policy ?? null,
+      reason: nextStatus.reason,
+      cacheHit: nextStatus.cacheHit ?? null,
+      durationMs: nextStatus.durationMs ?? null,
+      classifierModel: nextStatus.classifierModel ?? null,
+      modelID: event.model.id,
+      mutated: current !== selected,
+    });
     if (config.debug) console.debug("[auto-reasoning]", JSON.stringify({ effort: selected,
       difficulty: decision?.difficulty, cacheHit: assessment?.cacheHit }));
     // The only mutation is deliberately last: all failure paths preserve the request.
@@ -117,6 +131,16 @@ export async function setup(ctx: Plugin.Context) {
         if (active && controller.statuses.get(event.data.sessionID)) controller.usage.set(event.data.sessionID, {
           tokens: event.data.tokens, cost: event.data.cost, observedAt: event.created,
         });
+        if (config.measurement && active) {
+          const token = event.data.tokens as { input?: number; output?: number; reasoning?: number;
+            cache?: { read?: number; write?: number } } | undefined;
+          const at = typeof event.created === "number" && Number.isFinite(event.created)
+            ? new Date(event.created).toISOString() : new Date(0).toISOString();
+          controller.recordUsage(event.data.sessionID, { at,
+            tokens: { input: token?.input ?? 0, output: token?.output ?? 0, reasoning: token?.reasoning ?? 0,
+              cacheRead: token?.cache?.read ?? 0, cacheWrite: token?.cache?.write ?? 0 },
+            cost: typeof event.data.cost === "number" && Number.isFinite(event.data.cost) ? event.data.cost : null });
+        }
       }
     } catch { /* Telemetry is optional and must never interrupt a session. */ }
   })();

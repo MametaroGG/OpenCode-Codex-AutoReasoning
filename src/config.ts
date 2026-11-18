@@ -16,13 +16,14 @@ export interface Config {
   cacheTtlMs: number;
   maxEntries: number;
   debug: boolean;
+  measurement: boolean;
 }
 export const defaults: Config = {
   enabled: true, engine: "model", modelPolicy: "benchmark", minEffort: "low", maxEffort: "max",
   classifierModel: "openai/gpt-6-luna#low", allowModelRequests: false,
   maxModelRequests: 100, modelMaxInputChars: 2000,
   defaultEffort: "medium", manualOverride: null, timeoutMs: 15_000,
-  cacheTtlMs: 30 * 60_000, maxEntries: 256, debug: false,
+  cacheTtlMs: 30 * 60_000, maxEntries: 256, debug: false, measurement: false,
 };
 export function isEffort(value: unknown): value is Effort {
   return typeof value === "string" && (efforts as readonly string[]).includes(value);
@@ -34,7 +35,8 @@ export function parseConfig(input: unknown): Config {
   const raw = input as Record<string, unknown>;
   for (const key of Object.keys(raw)) if (!Object.hasOwn(defaults, key)) throw new Error("Unknown option");
   const c = { ...defaults, ...raw } as Config;
-  if (typeof c.enabled !== "boolean" || typeof c.debug !== "boolean" || typeof c.allowModelRequests !== "boolean") throw new Error("Invalid switch");
+  if (typeof c.enabled !== "boolean" || typeof c.debug !== "boolean" || typeof c.allowModelRequests !== "boolean" ||
+      typeof c.measurement !== "boolean") throw new Error("Invalid switch");
   if (c.engine !== "model") throw new Error("Only model classification is supported");
   if (c.modelPolicy !== "benchmark" && c.modelPolicy !== "common") throw new Error("Invalid model policy");
   if (typeof c.classifierModel !== "string" || c.classifierModel.length > 256 ||

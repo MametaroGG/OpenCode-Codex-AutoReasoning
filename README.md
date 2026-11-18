@@ -53,6 +53,7 @@ npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --igno
         "classifierModel": "openai/gpt-6-luna#low",
         // "minEffort": "low",   // 下限（既定 low）
         // "maxEffort": "xhigh", // 上限（既定 max）
+        // "measurement": true,  // ローカル計測ログ（既定 false）
         "allowModelRequests": false
       }
     }
@@ -72,6 +73,7 @@ npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --igno
 | 外部送信 | 既定オフ。`allowModelRequests: true`で有効化 |
 | 対応系列 | 32のAPI modelID（複数ベンチ14／単一sweep7／ヒューリスティック11） |
 | 検証 | SDK 2.3.2で型検査・テスト。実機HTTP送信は2.2.6で確認 |
+| ローカル計測 | `measurement: true`で上限付きの判定記録をローカル保持。指示文・パス・認証情報は保存しない |
 
 ## 詳細
 

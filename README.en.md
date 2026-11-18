@@ -53,6 +53,7 @@ Add to the `plugins` array of `opencode.jsonc`. Do not replace your existing con
         "classifierModel": "openai/gpt-6-luna#low",
         // "minEffort": "low",   // lower bound (default low)
         // "maxEffort": "xhigh", // upper bound (default max)
+        // "measurement": true,  // local bounded evidence log (default false)
         "allowModelRequests": false
       }
     }
@@ -72,6 +73,7 @@ Set `package` to the **absolute path** of the installation directory (`node_modu
 | External requests | Off by default; enabled with `allowModelRequests: true` |
 | Coverage | 32 API model IDs (14 multi-benchmark / 7 single-sweep / 11 heuristic) |
 | Verified | Typechecked and tested with SDK 2.3.2; real HTTP dispatch on 2.2.6 |
+| Local measurement | `measurement: true` keeps a bounded local log of decisions and host usage. No prompt text, paths or credentials are stored |
 
 ## Documentation
 
