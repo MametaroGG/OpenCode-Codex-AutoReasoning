@@ -6,13 +6,14 @@
 
 GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effortを自動調整するOpenCode V2プラグイン。
 
+[![npm](https://img.shields.io/npm/v/opencode-codex-autoreasoning?style=flat-square&logo=npm)](https://www.npmjs.com/package/opencode-codex-autoreasoning)
 [![Preview v0.2.4](https://img.shields.io/badge/preview-v0.2.4-a78bfa?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4)
 [![CI](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml)
 [![OpenCode V2](https://img.shields.io/badge/OpenCode-V2-18181b?style=flat-square)](https://opencode.ai/)
 [![Node.js 22+](https://img.shields.io/badge/Node.js-%3E%3D22-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-[ダウンロード](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
+[npmパッケージ](https://www.npmjs.com/package/opencode-codex-autoreasoning) · [GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
 
 </div>
 
@@ -63,13 +64,28 @@ GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effort
 <a id="installation"></a>
 ### 2. インストール
 
+> [!NOTE]
+> **npmで公開しています**: [`opencode-codex-autoreasoning@0.2.4`](https://www.npmjs.com/package/opencode-codex-autoreasoning)。GitHub Releasesの`.tgz`も同じ内容です。
+
 #### npmから（推奨）
 
 ```powershell
 npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning@0.2.4 --ignore-scripts
 ```
 
+- `--prefix ./auto-reasoning-plugin`: プラグイン専用フォルダへ入れ、作業中のプロジェクトに依存を追加しません。
+- `@0.2.4`: バージョン固定。更新を追いたい場合は`@0.2.4`を外してください。
+- `--ignore-scripts`: インストール時のlifecycle scriptを実行しません（このパッケージにscriptはありません）。
+
 プラグインの場所は`auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning`です。設定にはこのフォルダの**絶対パス**を使います。
+
+既存プロジェクトに追加して構わない場合は、次でも同じです。
+
+```powershell
+npm i opencode-codex-autoreasoning@0.2.4 --ignore-scripts
+```
+
+この場合は`plugins[].package`を`<プロジェクト>/node_modules/opencode-codex-autoreasoning`の絶対パスにしてください。
 
 #### GitHub Releasesから
 
@@ -291,6 +307,7 @@ TUIで次のコマンドを実行します。コマンドパレットの**Auto R
 |---|---|
 | 自動テスト・型検査 | **146件成功**。複数ベンチマーク14系列、単一sweep7系列、ヒューリスティック11系列、主要なFast／Flex／Pro／Ultrafast別名×4難易度をモックで検証 |
 | ビルド・配布物 | Windows／Linux CI、実tarballのオフラインインストール検証が成功 |
+| npm公開 | `opencode-codex-autoreasoning@0.2.4`をnpmレジストリへ公開。別ディレクトリへのクリーンインストールと`dist/index.js`のimportを確認 |
 | 実OpenCode | 2.2.6でLuna判定、Solへのlow/xhigh送信、HTTP正常応答、状態RPCを確認 |
 | モデル別ポリシー・maxの実送信 | **未検証**。実ホスト確認はv0.1.0の共通表によるもの |
 | Desktop・native TUI描画・WebSocket・長時間のツール継続 | **実機未検証** |
