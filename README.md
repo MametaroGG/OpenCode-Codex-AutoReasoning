@@ -7,7 +7,7 @@
 GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effortを自動調整するOpenCode V2プラグイン。
 
 [![npm](https://img.shields.io/npm/v/opencode-codex-autoreasoning?style=flat-square&logo=npm)](https://www.npmjs.com/package/opencode-codex-autoreasoning)
-[![Preview v0.2.4](https://img.shields.io/badge/preview-v0.2.4-a78bfa?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4)
+[![Release v0.2.4](https://img.shields.io/badge/release-v0.2.4-22c55e?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4)
 [![CI](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/actions/workflows/ci.yml)
 [![OpenCode V2](https://img.shields.io/badge/OpenCode-V2-18181b?style=flat-square)](https://opencode.ai/)
 [![Node.js 22+](https://img.shields.io/badge/Node.js-%3E%3D22-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
@@ -29,7 +29,7 @@ GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effort
 - **必要な判定だけを実行** — 同一指示はキャッシュし、ツール継続での再判定を抑制。
 
 > [!IMPORTANT]
-> 現在は**Pre-release**です。判定の外部送信は初期状態で無効です。有効化には`allowModelRequests: true`が必要で、判定にも接続先の利用枠・料金が発生し得ます。
+> **v0.2.4はGitHub Releaseとして公開中**です（古いv0.1.0〜v0.2.3はPre-releaseのまま）。判定の外部送信は初期状態で無効です。有効化には`allowModelRequests: true`が必要で、判定にも接続先の利用枠・料金が発生し得ます。モデル別ポリシーの実HTTP送信・Desktop/native TUI・実利用の品質と節約効果は未検証です。
 
 ## 目次
 

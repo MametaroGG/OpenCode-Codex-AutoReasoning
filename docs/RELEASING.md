@@ -49,6 +49,24 @@ npm view opencode-codex-autoreasoning version dist.tarball
 
 名前の空き・公開権限・2FA・`files`の範囲を事前に確認します。2FAが有効な場合は対話ターミナルでワンタイムコードを入力する必要があるため、非対話シェルでは公開できないことがあります。GitHub Releaseのtgzとnpmのtarballは同じバージョン・同じ`package.json`・同じ`dist`から生成しますが、npmは`private`解除後のメタデータを含むため、バイト単位では一致しない場合があります。
 
+## GitHub Packagesへの公開
+
+GitHub Packagesのnpmレジストリはスコープ付き名前が必要なので、リポジトリの`package.json`は変更せず、Actions上で`@mametarogg/opencode-codex-autoreasoning`へ書き換えて公開します。ローカルの`gh`トークンに`write:packages`は不要です。
+
+```powershell
+gh workflow run github-package.yml --ref main
+gh run list --workflow github-package.yml --limit 1
+```
+
+ワークフローは[.github/workflows/github-package.yml](../.github/workflows/github-package.yml)にあり、`permissions: packages: write`付きの`GITHUB_TOKEN`を使います。バージョンはリポジトリの`package.json`に合わせます。
+
+利用者側はGitHub Packagesの認証が必要です（`read:packages`付きのPAT等）。
+
+```powershell
+npm config set @mametarogg:registry https://npm.pkg.github.com
+npm i @mametarogg/opencode-codex-autoreasoning@0.2.4 --ignore-scripts
+```
+
 ## GitHubでのドラフト作成
 
 package.jsonのバージョンと同じtag（例: `v0.1.0`）を作り、そのtagをpushすると、準備したworkflowが以下を実行します。
@@ -60,7 +78,7 @@ package.jsonのバージョンと同じtag（例: `v0.1.0`）を作り、そのt
 
 実モデルの評価はCIから起動しません。ActionsにはOpenAIのAPIキーは不要です。draft作成のみGitHubの標準GITHUB_TOKENを使います。tagからのdraft作成workflowはv0.1.0で実行・成功を確認済みです。
 
-ドラフトの説明・添付物・ライセンス・既知の制約を確認した後、初回版は**Pre-release**として手動公開します。通常の安定版やLatestへ昇格させません。公開済みtagを移動・上書きせず、修正時は新バージョンを作ってください。
+ドラフトの説明・添付物・ライセンス・既知の制約を確認した後、手動で公開します。v0.1.0〜v0.2.3は**Pre-release**として配布しましたが、v0.2.4は通常の**Release**へ昇格しました。昇格しても既知の制約（モデル別ポリシーの実HTTP送信、Desktop/native TUI、実利用の品質と節約の未検証）は変わりません。公開済みtagを移動・上書きせず、修正時は新バージョンを作ってください。
 
 ## 利用者のインストール例
 
