@@ -24,7 +24,7 @@ flowchart LR
 ```
 
 > [!IMPORTANT]
-> 判定の外部送信は既定で無効（`allowModelRequests: true`で有効化）。利用枠・料金が発生します。モデル別ポリシーの実HTTP送信、Desktop／native TUI、実利用の品質・節約効果は未検証です。
+> 判定の外部送信は既定で無効（`allowModelRequests: true`で有効化）。利用枠・料金が発生します。モデル別ポリシーの実HTTP送信とDesktop／native TUIは未検証です。実利用の品質・節約効果は未測定です（利用実績はありますが、トークン量・費用の対比データがありません）。
 
 ## インストール
 

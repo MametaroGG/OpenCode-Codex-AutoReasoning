@@ -36,7 +36,7 @@ OpenCodeの`plugins[].package`には、インストール先の`node_modules/ope
 
 - SDK 2.3.2で型検査・146件のテスト・ビルド・保持上限benchmark・実tarballのオフラインインストール検証が成功。
 - 32系列×4難易度、主要なFast／Flex／Pro／Ultrafast別名、カタログ上限によるクランプをモックで検証。
-- 実機HTTP送信・Desktop/native TUI/WebSocket・実利用での品質と節約効果は未検証です。Lunaの精度は24種類×2回の作者ラベルによる補助的な指標であり、下流の品質・節約効果を保証しません。
+- 実機HTTP送信・Desktop/native TUI/WebSocketは未検証です。実利用の品質・節約効果は未測定です（利用実績はあるが、トークン量・費用の対比データなし）。Lunaの精度は24種類×2回の作者ラベルによる補助的な指標であり、下流の品質・節約効果を保証しません。
 - 対象はNode.js 22以上、OpenCode V2、SDK 2.3.2系。V1非対応。開発用の調整対象は`openai`プロバイダだけです。
 - SDK推移依存の監査警告は継続。公開前の`npm audit --omit=dev`はmoderate 23件、high 5件、criticalなし。
 

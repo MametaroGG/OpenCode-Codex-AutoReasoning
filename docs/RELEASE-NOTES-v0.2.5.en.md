@@ -32,7 +32,7 @@ Set `plugins[].package` to the absolute path of the installation directory (`nod
 
 - Typecheck, 146 tests, build, retention benchmark and offline tarball installation passed with SDK 2.3.2.
 - 32 families × 4 difficulty levels, major Fast / Flex / Pro / Ultrafast aliases and catalog clamping verified with mocks.
-- Real HTTP dispatch, Desktop / native TUI / WebSocket and real-world quality or savings are not verified. Luna's accuracy result uses 24 author-labeled synthetic tasks × 2 and is not a guarantee of downstream quality or savings.
+- Real HTTP dispatch and Desktop / native TUI / WebSocket are not verified. Real-world quality and savings have not been measured (the plugin has been used, but no token or cost comparison was recorded). Luna's accuracy result uses 24 author-labeled synthetic tasks × 2 and is not a guarantee of downstream quality or savings.
 - Requires Node.js 22+, OpenCode V2 and SDK 2.3.2. V1 is not supported. The adjustment target is the `openai` provider only.
 - Known transitive SDK audit warnings remain. Before publishing, `npm audit --omit=dev` reported 23 moderate, 5 high and 0 critical advisories.
 

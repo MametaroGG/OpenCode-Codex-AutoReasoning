@@ -24,7 +24,7 @@ flowchart LR
 ```
 
 > [!IMPORTANT]
-> External classification requests are disabled by default (`allowModelRequests: true` to enable). They consume quota or money. Real HTTP dispatch of the per-model policies, Desktop / native TUI, and real-world quality or savings have not been verified.
+> External classification requests are disabled by default (`allowModelRequests: true` to enable). They consume quota or money. Real HTTP dispatch of the per-model policies and Desktop / native TUI have not been verified. Real-world quality and savings have not been measured — the plugin has been used, but no token or cost comparison was recorded.
 
 ## Installation
 
