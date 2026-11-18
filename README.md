@@ -66,16 +66,16 @@ GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effort
 ### 2. インストール
 
 > [!NOTE]
-> **npmで公開しています**: [`opencode-codex-autoreasoning@0.2.4`](https://www.npmjs.com/package/opencode-codex-autoreasoning)。GitHub Releasesの`.tgz`も同じ内容です。
+> **npmで公開しています**: [`opencode-codex-autoreasoning`](https://www.npmjs.com/package/opencode-codex-autoreasoning)（執筆時点の最新版は `0.2.4`）。GitHub Releasesの`.tgz`も同じ内容です。
 
 #### npmから（推奨）
 
 ```powershell
-npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning@0.2.4 --ignore-scripts
+npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts
 ```
 
 - `--prefix ./auto-reasoning-plugin`: プラグイン専用フォルダへ入れ、作業中のプロジェクトに依存を追加しません。
-- `@0.2.4`: バージョン固定。更新を追いたい場合は`@0.2.4`を外してください。
+- バージョン指定を省くとnpmの`latest`（現在`0.2.4`）を入ります。再現性を重視する場合のみ`@0.2.4`を付けて固定してください。
 - `--ignore-scripts`: インストール時のlifecycle scriptを実行しません（このパッケージにscriptはありません）。
 
 プラグインの場所は`auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning`です。設定にはこのフォルダの**絶対パス**を使います。
@@ -83,7 +83,7 @@ npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning@0.2.4 
 既存プロジェクトに追加して構わない場合は、次でも同じです。
 
 ```powershell
-npm i opencode-codex-autoreasoning@0.2.4 --ignore-scripts
+npm i opencode-codex-autoreasoning --ignore-scripts
 ```
 
 この場合は`plugins[].package`を`<プロジェクト>/node_modules/opencode-codex-autoreasoning`の絶対パスにしてください。
@@ -94,8 +94,10 @@ npm i opencode-codex-autoreasoning@0.2.4 --ignore-scripts
 
 ```powershell
 npm config set @mametarogg:registry https://npm.pkg.github.com
-npm i @mametarogg/opencode-codex-autoreasoning@0.2.4 --ignore-scripts
+npm i @mametarogg/opencode-codex-autoreasoning --ignore-scripts
 ```
+
+バージョンを固定したい場合は`@mametarogg/opencode-codex-autoreasoning@0.2.4`としてください。
 
 `plugins[].package`には`node_modules/@mametarogg/opencode-codex-autoreasoning`の絶対パスを指定します。
 

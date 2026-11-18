@@ -64,7 +64,7 @@ gh run list --workflow github-package.yml --limit 1
 
 ```powershell
 npm config set @mametarogg:registry https://npm.pkg.github.com
-npm i @mametarogg/opencode-codex-autoreasoning@0.2.4 --ignore-scripts
+npm i @mametarogg/opencode-codex-autoreasoning --ignore-scripts   # 固定したい場合は @0.2.4 を付ける
 ```
 
 ## GitHubでのドラフト作成
@@ -86,7 +86,7 @@ ReleaseからtgzとSHA256SUMSをダウンロードし、SHA-256を確認して�
 
 ```powershell
 # npmレジストリから（推奨）
-npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning@0.2.4 --ignore-scripts
+npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts   # 固定したい場合は @0.2.4 を付ける
 
 # GitHub Releasesのtgzから（SHA-256照合後）
 npm install --prefix ./auto-reasoning-plugin ./opencode-codex-autoreasoning-0.2.4.tgz --ignore-scripts
