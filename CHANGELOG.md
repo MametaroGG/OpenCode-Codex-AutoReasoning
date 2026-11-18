@@ -1,8 +1,14 @@
 # Changelog
 
-## 0.2.2 — npm公開（2026-11-18）
+## 0.2.3 — npm公開（正式名，2026-11-18）
 
-- npmレジストリへ`opencode-auto-reasoning@0.2.2`を公開。`private`を解除し、`publishConfig.access: "public"`を設定。ライセンスはMIT、公開対象は`dist`・README・CHANGELOG・`docs`・`examples`のみ。
+- npmパッケージ名を`opencode-codex-reasoning`へ変更。0.2.2で使っていた`opencode-auto-reasoning`は誤りで、npmには同名の`0.0.0-stage`プレースホルダーだけが作られており、プラグイン本体は公開されていませんでした。0.2.2のGitHub Release・タグは公開済みのため変更せず、0.2.3として正式名で再公開します。
+- `package.json`・lockfile・README・リリースノート・配布検証スクリプトのパッケージ名とインストール手順を更新。GitHub Releasesのtgz名も`opencode-codex-reasoning-0.2.3.tgz`になります。
+- Lunaの精度・モデル別ポリシー・テスト146件の結果は0.2.2から変更なし。監査警告はmoderate 23件・high 5件・criticalなし。
+
+## 0.2.2 — npm公開準備（2026-11-18）
+
+- `private`を解除し、`publishConfig.access: "public"`を設定。READMEとリリースノートにnpmインストール手順を追加しましたが、2FAと名前違いのため**プラグイン本体のnpm公開はこの版では完了していません**。GitHub Releasesの`.tgz`と`SHA256SUMS`は配布済みです。
 - READMEとリリースノートにnpmからのインストール手順を追加。GitHub Releasesの`.tgz`と`SHA256SUMS`も引き続き配布し、公開済みv0.1.0／v0.2.0／v0.2.1のタグ・添付ファイルは変更しない。
 - Lunaの精度は2026-11-08の44/48（91.7%）を参照。判定promptとJSON検証は測定時から変更していないが、判定実装のハッシュは異なる（既定タイムアウト3秒→15秒の変更）。同一コードでの再測定は行っていない。
 - テスト146件成功。型検査、ビルド、オフラインbenchmark、tarball検証、npm公開のdry-runも成功。監査警告はmoderate 23件・high 5件・criticalなし。

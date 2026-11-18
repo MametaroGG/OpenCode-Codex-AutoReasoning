@@ -9,7 +9,7 @@
 | npm run build | 成功 |
 | npm run benchmark | 成功。固定応答の検証・キャッシュ・保持上限のみ |
 | npm run verify:package | オフラインで実tarballをインストールし、モックホスト検証成功 |
-| npm run release:pack | 成功。`opencode-auto-reasoning-0.2.2.tgz`と`SHA256SUMS`をローカル生成、公開なし |
+| npm run release:pack | 成功。`opencode-codex-reasoning-0.2.3.tgz`と`SHA256SUMS`をローカル生成、公開なし |
 | git diff --check | 成功 |
 
 ## カタログ確認
