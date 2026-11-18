@@ -21,7 +21,7 @@ GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effort
 ## 特長
 
 - **タスクに合わせて自動調整** — 指示の難易度を4段階で判定し、送信直前に思考量を選択。
-- **モデル別の選択ポリシー** — reasoning対応の全32系列に対応。Fast／Flex／Pro／Ultrafastは同じAPIモデルIDの表を適用。r2測定9系列、2026-11-18ベンチマーク基準12系列、ヒューリスティック11系列を区別。
+- **モデル別の選択ポリシー** — reasoning対応の全32系列に対応。Fast／Flex／Pro／Ultrafastは同じAPIモデルIDの表を適用。複数ベンチマーク14系列（09 r2の9＋18 r2の5）、単一sweep7系列、ヒューリスティック11系列を区別。
 - **モデル選択はユーザーのまま** — 開発モデルの自動切替や、セッションの既定設定の書換えは行いません。
 - **ユーザー指定を尊重** — 明示variantや既存のリクエスト設定を保持。手動固定・上限設定も可能。
 - **失敗時は変更しない** — 判定失敗・タイムアウト・未許可の場合は元の設定を保持。
@@ -154,30 +154,33 @@ GPT-6 Lunaが難易度を判定
 
 ### モデル別ポリシー
 
-2026-11-18時点のOpenAIカタログ98項目を確認し、reasoning effortを持つ**32のAPI modelID**をすべて収録しています。公開測定に基づく21系列と、公開sweepがないため能力クラスから決めた11系列を、状態の`policy`欄で区別します。
+2026-11-18時点のOpenAIカタログ98項目を確認し、reasoning effortを持つ**32のAPI modelID**をすべて収録しています。公開測定に基づく21系列（複数ベンチマーク14系列＋単一sweep7系列）と、公開sweepがないため能力クラスから決めた11系列を、状態の`policy`欄で区別します。
 
 #### 公開測定に基づく21系列
 
-`根拠`列の**r2**は複数の独立評価を比較した`benchmark-2026-11-09-r2`、**2026-11-18**は思考量別sweepを追加確認した`benchmark-2026-11-18-r1`です。どちらも4難易度ラベル別の最適値を実証した表ではありません。
+`根拠`列は、**09 r2**＝複数評価を比較した`benchmark-2026-11-09-r2`、**18 r2**＝2026-11-18に新規5系列を同じ基準で再検討した`benchmark-2026-11-18-r2`、**18 r1**＝思考量別sweepを1つだけ確認した`benchmark-2026-11-18-r1`です。いずれも4難易度ラベル別の最適値を実証した表ではありません。
 
 | 開発モデル | Very Low | Low | High | Very High | 根拠 |
 |---|---|---|---|---|---|
-| GPT-6.1 Sol | low | medium | high | xhigh | r2 |
-| GPT-6.1 Terra | low | high | xhigh | max | r2 |
-| GPT-6 Astra | low | low | medium | xhigh | r2 |
-| GPT-6 Sol | low | medium | xhigh | max | r2 |
-| GPT-6 Luna | low | high | xhigh | max | r2 |
-| GPT-5.6 Sol | low | medium | xhigh | max | r2 |
-| GPT-5.6 Terra | low | high | xhigh | max | r2 |
-| GPT-5.6 Luna | low | high | xhigh | max | r2 |
-| GPT-5.5 | low | high | xhigh | xhigh | r2 |
-| GPT-6.2 Sol／Astra | low | medium | high | xhigh | 2026-11-18 |
-| GPT-5.4 | low | low | medium | xhigh | 2026-11-18 |
-| GPT-5.4 mini／nano | low | medium | high | xhigh | 2026-11-18 |
-| GPT-5.3 Codex | low | medium | high | xhigh | 2026-11-18 |
-| GPT-5.2／GPT-5.1 | low | medium | high | high | 2026-11-18 |
-| GPT-5／GPT-5 mini／GPT-5 nano | low | low | high | high | 2026-11-18 |
-| o3 | low | medium | high | high | 2026-11-18 |
+| GPT-6.1 Sol | low | medium | high | xhigh | 09 r2 |
+| GPT-6.1 Terra | low | high | xhigh | max | 09 r2 |
+| GPT-6 Astra | low | low | medium | xhigh | 09 r2 |
+| GPT-6 Sol | low | medium | xhigh | max | 09 r2 |
+| GPT-6 Luna | low | high | xhigh | max | 09 r2 |
+| GPT-5.6 Sol | low | medium | xhigh | max | 09 r2 |
+| GPT-5.6 Terra | low | high | xhigh | max | 09 r2 |
+| GPT-5.6 Luna | low | high | xhigh | max | 09 r2 |
+| GPT-5.5 | low | high | xhigh | xhigh | 09 r2 |
+| GPT-6.2 Sol | low | medium | high | max | 18 r2 |
+| GPT-6.2 Astra | low | medium | high | xhigh | 18 r2 |
+| GPT-5.4 | low | low | medium | xhigh | 18 r2 |
+| GPT-5.4 mini | low | medium | high | xhigh | 18 r2 |
+| GPT-5.2 | low | medium | high | high | 18 r2 |
+| GPT-5.4 nano | low | medium | high | xhigh | 18 r1 |
+| GPT-5.3 Codex | low | medium | high | xhigh | 18 r1 |
+| GPT-5.1 | low | medium | high | high | 18 r1 |
+| GPT-5／GPT-5 mini／GPT-5 nano | low | low | high | high | 18 r1 |
+| o3 | low | medium | high | high | 18 r1 |
 
 #### ヒューリスティック11系列
 
@@ -193,7 +196,7 @@ Fast／Flex／Pro／Ultrafastは**カタログのAPI modelIDが同じ場合**に
 
 reasoning variantを持たない`chat-latest`、`gpt-audio-1.5`、`gpt-5-search-api`、GPT-4.1／GPT-4o系は、思考量を変更せず元の設定のまま動作します。
 
-公開測定に基づく21系列のうち、r2の9系列はVulcanBench、Datacurve DeepSWE、Artificial Analysis、Hex DataBench等、2026-11-18の12系列はLiveBench・OckBench・Artificial Analysis Indexを参考にした**暫定ポリシー**です。ヒューリスティック11系列は、それらの一次評価がまだないため能力クラスから設計した**未測定ポリシー**です。いずれも公式がこの割当を推奨しているわけではなく、最適性や実利用での品質・節約効果を保証しません。[選択方針](docs/MODEL-POLICIES.md)・[ベンチマーク比較](docs/MULTI-BENCHMARK-REVIEW.md)で根拠と限界を説明しています。
+公開測定に基づく21系列のうち、複数ベンチマーク14系列は09 r2（VulcanBench、Datacurve DeepSWE、Artificial Analysis、Hex DataBench等）と18 r2（AAの2課題群、LiveBench、OckBench、Cognition FrontierCode等）で再検討済み、単一sweep7系列はLiveBench 1つの曲線をanchorにした**暫定ポリシー**です。ヒューリスティック11系列は、それらの一次評価がまだないため能力クラスから設計した**未測定ポリシー**です。いずれも公式がこの割当を推奨しているわけではなく、最適性や実利用での品質・節約効果を保証しません。[選択方針](docs/MODEL-POLICIES.md)・[ベンチマーク比較](docs/MULTI-BENCHMARK-REVIEW.md)で根拠と限界を説明しています。
 
 実際には、カタログで確認できた`reasoningEffort`だけを使います。min/maxの範囲内で切り上げ、なければ範囲内の最大対応値を選択します。対応不明・設定方式の混在・範囲内に候補がない場合は変更しません。`none`は自動選択しませんが、ユーザーの明示設定は保持します。
 
@@ -280,7 +283,7 @@ TUIで次のコマンドを実行します。コマンドパレットの**Auto R
 
 | 検証項目 | 状況 |
 |---|---|
-| 自動テスト・型検査 | **146件成功**。r2の9系列、2026-11-18の12系列、ヒューリスティック11系列、主要なFast／Flex／Pro／Ultrafast別名×4難易度をモックで検証 |
+| 自動テスト・型検査 | **146件成功**。複数ベンチマーク14系列、単一sweep7系列、ヒューリスティック11系列、主要なFast／Flex／Pro／Ultrafast別名×4難易度をモックで検証 |
 | ビルド・配布物 | Windows／Linux CI、実tarballのオフラインインストール検証が成功 |
 | 実OpenCode | 2.2.6でLuna判定、Solへのlow/xhigh送信、HTTP正常応答、状態RPCを確認 |
 | モデル別ポリシー・maxの実送信 | **未検証**。実ホスト確認はv0.1.0の共通表によるもの |

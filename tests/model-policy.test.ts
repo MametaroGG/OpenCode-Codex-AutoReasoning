@@ -26,20 +26,29 @@ for (const [modelID, expected] of [
 }
 
 for (const [modelID, expected] of [
-  ["gpt-6.2-sol", ["low", "medium", "high", "xhigh"]],
+  ["gpt-6.2-sol", ["low", "medium", "high", "max"]],
   ["gpt-6.2-astra", ["low", "medium", "high", "xhigh"]],
   ["gpt-5.4", ["low", "low", "medium", "xhigh"]],
   ["gpt-5.4-mini", ["low", "medium", "high", "xhigh"]],
+  ["gpt-5.2", ["low", "medium", "high", "high"]],
+] as const) {
+  test(`versioned multi-benchmark policy (2026-11-18 r2): ${modelID}`, () => {
+    assert.deepEqual(difficulties.map(d => modelEffort({ modelID }, d, defaults).effort), expected);
+    assert.equal(modelEffort({ modelID }, "High", defaults).policy, `benchmark-2026-11-18-r2:${modelID}`);
+    assert.equal(modelEffort({ modelID }, "Very High", { modelPolicy: "common" }).effort, "xhigh");
+  });
+}
+
+for (const [modelID, expected] of [
   ["gpt-5.4-nano", ["low", "medium", "high", "xhigh"]],
   ["gpt-5.3-codex", ["low", "medium", "high", "xhigh"]],
-  ["gpt-5.2", ["low", "medium", "high", "high"]],
   ["gpt-5.1", ["low", "medium", "high", "high"]],
   ["gpt-5", ["low", "low", "high", "high"]],
   ["gpt-5-mini", ["low", "low", "high", "high"]],
   ["gpt-5-nano", ["low", "low", "high", "high"]],
   ["o3", ["low", "medium", "high", "high"]],
 ] as const) {
-  test(`versioned benchmark policy (2026-11-18): ${modelID}`, () => {
+  test(`versioned single-sweep policy (2026-11-18 r1): ${modelID}`, () => {
     assert.deepEqual(difficulties.map(d => modelEffort({ modelID }, d, defaults).effort), expected);
     assert.equal(modelEffort({ modelID }, "High", defaults).policy, `benchmark-2026-11-18-r1:${modelID}`);
     assert.equal(modelEffort({ modelID }, "Very High", { modelPolicy: "common" }).effort, "xhigh");

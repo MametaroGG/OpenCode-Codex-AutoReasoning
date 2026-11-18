@@ -1,6 +1,6 @@
 # モデル別ポリシー変更の検証（2026-11-18）
 
-2026-11-18のカタログ拡張後、下記の全コマンドを再実行して成功しました。reasoning effortを持つ32系列を、r2の9系列（`benchmark-2026-11-09-r2`）、2026-11-18に追加した12系列（`benchmark-2026-11-18-r1`）、ヒューリスティック11系列（`heuristic-2026-11-18`）に分けて検証しています。[ポリシーと根拠の区別](MODEL-POLICIES.md)を参照してください。
+2026-11-18のカタログ拡張後、下記の全コマンドを再実行して成功しました。reasoning effortを持つ32系列を、複数ベンチマークで再検討した14系列（`benchmark-2026-11-09-r2`の9系列と`benchmark-2026-11-18-r2`の5系列）、思考量別sweepを1つだけ確認した7系列（`benchmark-2026-11-18-r1`）、ヒューリスティック11系列（`heuristic-2026-11-18`）に分けて検証しています。[ポリシーと根拠の区別](MODEL-POLICIES.md)を参照してください。
 
 | 検証 | 結果 |
 |---|---|
@@ -24,10 +24,11 @@
 
 ## テスト範囲
 
-- r2の9系列：各4難易度の値と`benchmark-2026-11-09-r2:<modelID>`を検証。通常／Fastのcontext hook配線、キャッシュ再利用、モデル変更を含みます。
-- 2026-11-18の12系列：各4難易度の値と`benchmark-2026-11-18-r1:<modelID>`を検証。GPT-6.2、GPT-5.4系、GPT-5.3 Codex、GPT-5.2／5.1、GPT-5系、o3を含みます。
+- 既存r2の9系列：各4難易度の値と`benchmark-2026-11-09-r2:<modelID>`を検証。通常／Fastのcontext hook配線、キャッシュ再利用、モデル変更を含みます。
+- 2026-11-18 r2の5系列：GPT-6.2 Sol／Astra、GPT-5.4、GPT-5.4 mini、GPT-5.2の各4難易度の値と`benchmark-2026-11-18-r2:<modelID>`を検証。GPT-6.2 SolのVery High=max、Astra以下の維持を確認。
+- 単一sweepの7系列：GPT-5.4 nano、GPT-5.3 Codex、GPT-5.1、GPT-5、GPT-5 mini／nano、o3の各4難易度の値と`benchmark-2026-11-18-r1:<modelID>`を検証。
 - ヒューリスティック11系列：frontier／compactの各4難易度と`heuristic-2026-11-18:<modelID>`を検証。
-- 12系列と11系列の主要なFast／Flex／Pro／Ultrafast別名、カタログ上限によるクランプを検証。
+- r2の5系列、単一sweep7系列、ヒューリスティック11系列の主要なFast／Flex／Pro／Ultrafast別名、カタログ上限によるクランプを検証。
 - frontier系、compact系、合計32系列が`common`へ落ちないことを検証。
 - reasoning variantを持たない`chat-latest`、`gpt-audio-1.5`、`gpt-5-search-api`、GPT-4.1／GPT-4o系は、自動選択の対象外であることを検証。
 - Pro系のmedium下限、`gpt-5.1`／`gpt-5`／`gpt-5-mini`／`gpt-5-nano`／`o3`／`o3-pro`のhigh上限、`gpt-5-pro`のhigh固定など、カタログに合わせた切上げを検証。

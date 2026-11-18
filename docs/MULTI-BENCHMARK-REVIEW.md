@@ -1,11 +1,78 @@
-# 複数ベンチマークによる再検討（2026-11-09、r2）
-
-## 結論と変更範囲
-
-VulcanBenchだけでは裏付けが弱かったため、独立した評価元・異なる課題群を比較しました。**3セルを修正し、6系列は維持**します。実装は`benchmark-2026-11-09-r2:<modelID>`で区別し、v0.2.0 Pre-releaseに含めます。公開済みv0.1.0は変更しません。
+# 複数ベンチマークによる再検討（2026-11-09 r2、2026-11-18 r2）
 
 > [!NOTE]
-> この文書が扱うのは、複数評価を比較した**r2の9系列だけ**です。2026-11-18に追加した12系列（GPT-6.2、GPT-5.4系、GPT-5系、o3など）は、この文書とは別にLiveBench・OckBench・Artificial Analysis Indexの思考量別sweepで検証しています（`benchmark-2026-11-18-r1`）。Cyber／Daybreak／Pro系／GPT-5.6など残る11系列は、ここで比較した思考量別sweepの対象外であり、能力クラスから設計した未測定ポリシーです。[MODEL-POLICIES.md](MODEL-POLICIES.md)で明確に区別しています。
+> この文書は、複数評価を比較した2回のレビューを扱います。2026-11-09のr2は既存9系列、2026-11-18のr2は新規対応モデルのうち異なる課題群の思考量別sweepを2つ以上確認できた5系列です（6.2は同一評価元の別課題群を含む）。2026-11-18のr1に残る7系列（GPT-5.4 nano、GPT-5.3 Codex、GPT-5.1、GPT-5、GPT-5 mini／nano、o3）は思考量別sweepが1つだけ、Cyber／Daybreak／Pro系／GPT-5.6など11系列はsweep自体がないため、それぞれ単一ソース／未測定として区別します。[MODEL-POLICIES.md](MODEL-POLICIES.md)で明確に区別しています。
+
+## 2026-11-18の追加レビュー（新規5系列）
+
+新たにカタログ対応した12系列を、既存r2と同じ基準（複数の思考量別sweepを比較し、平均・多数決をせず、coding／agenticの個別結果を重視する）で再検討しました。**5系列を`benchmark-2026-11-18-r2`へ昇格します。そのうち4系列はプロファイルを維持し、GPT-6.2 SolだけVery Highをxhigh→maxへ修正**します。残る7系列は思考量別sweepが1つだけのため`benchmark-2026-11-18-r1`に残します。
+
+| モデル | Very Low | Low | High | Very High | r1からの変更 | 確認した思考量別sweep |
+|---|---|---|---|---|---|---|
+| 6.2 Sol | low | medium | high | max | Very High: xhigh→max | AA Terminal-Bench 4.0／FrontierCode-AA 2.0 |
+| 6.2 Astra | low | medium | high | xhigh | 維持 | 同上 |
+| 5.4 | low | low | medium | xhigh | 維持 | LiveBench／OckBench（DeepSWEはxhigh単点） |
+| 5.4 mini | low | medium | high | xhigh | 維持 | LiveBench／Cognition FrontierCode 1.1 |
+| 5.2 | low | medium | high | high | 維持 | LiveBench／OckBench-Math v2 |
+
+### 思考量別スコア
+
+順序はlow / medium / high / xhigh / max。`—`はその水準の行がないことを示し、0点ではありません。AAは2026-11-18参照の比較ページ、Cognitionは公開JSON、LiveBenchは2026-01-08の生のOverall、OckBenchはv3 Overall（5.2はv2のMath 100問）です。
+
+| モデル | 評価 | low / medium / high / xhigh / max |
+|---|---|---|
+| 6.2 Sol | AA Terminal-Bench 4.0 | 37.9 / 56.1 / 58.6 / 56.1 / 60.1 |
+| 6.2 Astra | AA Terminal-Bench 4.0 | 51.0 / 58.6 / 60.1 / 64.1 / 64.1 |
+| 6.2 Sol | AA FrontierCode-AA 2.0 | 31.4 / 41.4 / 40.2 / 42.8 / 44.4 |
+| 6.2 Astra | AA FrontierCode-AA 2.0 | 32.7 / 46.6 / 47.1 / 49.0 / 45.4 |
+| 6.2 Sol | AA Intelligence Index v5.0.1 | 41 / 53 / 55 / 56 / 57 |
+| 6.2 Astra | AA Intelligence Index v5.0.1 | 46 / 57 / 60 / 62 / 62 |
+| 6.2 Sol | Cognition FrontierCode 2.0（補強） | 36.6 / 42.2 / 43.9 / 43.9 / 48.2 |
+| 6.2 Astra | Cognition FrontierCode 2.0（補強） | 42.2 / 46.5 / 47.7 / 48.5 / 48.2 |
+| 5.4 | LiveBench Overall | — / — / 75.07 / 80.28 / — |
+| 5.4 | OckBench Overall | 78.0 / 82.0 / 80.5 / — / — |
+| 5.4 | DeepSWE Pass@1（単点） | — / — / — / 51.77 / — |
+| 5.4 mini | LiveBench Overall | 49.54 / 58.33 / 63.57 / 67.54 / — |
+| 5.4 mini | Cognition FrontierCode 1.1 | 10.6 / 23.7 / 26.3 / 30.8 / — |
+| 5.2 | LiveBench Overall | 65.33 / 71.84 / 74.84 / — / — |
+| 5.2 | OckBench-Math v2 | 41.5 / 63.0 / 66.0 / — / — |
+
+AAの2026-11-18比較ページは[6.2 Sol対Astra](https://artificialanalysis.ai/models/releases/comparisons/gpt-6-2-sol-vs-gpt-6-2-astra)。CognitionのFrontierCode 2.0は[公開JSON](https://cognition.com/data/frontier-code-2.0/data.json)、FrontierCode 1.1は[公開JSON](https://cognition.com/data/frontier-code-1.1/data.json)。OckBenchは[リーダーボード](https://ockbench.github.io/)と[論文v2のMath表](https://arxiv.org/html/2511.05722v2)を参照しました。
+
+### 5系列それぞれの判断
+
+1. **6.2 Sol：Very Highをxhighからmaxへ。** AAの2課題群はどちらも最上位でmaxがxhighを上回ります（Terminal-Bench 60.1%対56.1%、FrontierCode 44.4%対42.8%）。CognitionのFrontierCode 2.0もmax 48.2%対xhigh 43.9%で同方向ですが、同じFrontierCode系で課題が重複し得るため、独立した2つ目として数えず補強にとどめます。Highはhighのままです（Terminal-Benchはhigh 58.6%がxhigh 56.1%より上、FrontierCodeはhigh 40.2%がxhigh 42.8%より下で一致しない）。maxはTime per Task 7.9分・$1.01でxhighの4.9分・$0.65より重いため、最難のVery Highだけに限定します。
+2. **6.2 Astra：維持。** xhighはTerminal-Bench 64.1%（maxと同点）、Index 62（maxと同点）、FrontierCode 49.0%（max 45.4%より上）。maxは11.5分・$4.00でxhighの6.5分・$2.52より重く、一貫した改善がありません。High=highも3評価でhigh>mediumです。
+3. **5.4：維持。** OckBenchはlow 78.0、medium 82.0、high 80.5でmediumが最高、highは下がります。LiveBenchはhigh 75.07→xhigh 80.28、Agentic Coding 46.7→70.0。DeepSWEはxhigh 51.77の単点だけで曲線を確認できないため、sweepの裏付けには数えません。Low=low（OckBenchのlowが既に高い）、High=medium（OckBenchのpeak）、Very High=xhigh（LiveBenchの跳ね）を維持します。
+4. **5.4 mini：維持。** LiveBench 49.54 / 58.33 / 63.57 / 67.54とCognition FrontierCode 1.1 10.6 / 23.7 / 26.3 / 30.8がともに単調に改善し、xhighが両方で最高です。
+5. **5.2：維持。** LiveBench 65.33 / 71.84 / 74.84とOckBench-Math v2 41.5 / 63.0 / 66.0がともにhighまで単調です。どちらにもxhigh行がないため、Very Highは測定済みの最高値であるhighに留めます。
+
+### 思考量別sweepが1つだけの7系列（r1のまま）
+
+| モデル | 確認できた思考量別sweep | 2つ目として数えなかったもの |
+|---|---|---|
+| 5.4 nano | LiveBench（low→xhigh） | AA IndexはN/A |
+| 5.3 Codex | LiveBench（high／xhigh） | なし |
+| 5.1 | LiveBench（low／medium／high） | なし |
+| 5 | LiveBench（minimal／low／high） | なし |
+| 5 mini | LiveBench（minimal／low／high） | OckBench-Math highの単点 |
+| 5 nano | LiveBench（low／high） | なし |
+| o3 | LiveBench（medium／high） | なし |
+
+単点や2水準だけの結果は曲線の形を確認できないため、2つ目のsweepとして数えません。**7系列は「測定済みの最適値」ではなく、単一ソースの曲線をanchorにした暫定ポリシー**として`benchmark-2026-11-18-r1`のまま残します。
+
+### このレビューの限界
+
+- AAの2課題群は同一評価元です。09 r2でも独立したcoding評価として扱いましたが、評価元の独立性としては1社です。CognitionのFrontierCodeは同じ課題系を含み得るため、独立した2社目には数えていません。
+- LiveBench Overallは分野横断の編集的な総合値、OckBenchは200問、OckBench-Math v2は100問、FrontierCodeはCognitionのharness、AAは同社のharnessです。点数を平均・換算していません。
+- 4つのローカル難易度ラベルで層別したデータはなく、Very Low=lowと下位2段の一部は設計判断です。5.4のLow=low、5.2のVery High=highなど、測定外の割当を含みます。
+- このプラグインの実環境で品質・節約・待機時間の改善を再測定したものではありません。
+
+## 2026-11-09のr2レビュー（既存9系列）
+
+### 結論と変更範囲
+
+VulcanBenchだけでは裏付けが弱かったため、独立した評価元・異なる課題群を比較しました。**3セルを修正し、6系列は維持**します。実装は`benchmark-2026-11-09-r2:<modelID>`で区別し、v0.2.0 Pre-releaseに含めます。公開済みv0.1.0は変更しません。
 
 | モデル | Very Low | Low | High | Very High | r1からの変更 |
 |---|---|---|---|---|---|
@@ -21,7 +88,7 @@ VulcanBenchだけでは裏付けが弱かったため、独立した評価元・
 
 これは**開発用の品質・時間・使用量の折衷方針**です。各評価の点数を平均して作った表でも、4難易度ごとに最適性を実証した表でもありません。難しい課題では品質向上に余地を残し、通常課題では上位思考量の追加費用を抑えます。ある思考量を飛ばすことは、その思考量が劣るという主張ではありません。
 
-## 評価元、条件、独立性
+### 評価元、条件、独立性
 
 いずれも2026-11-09参照。外部モデルへの追加推論要求なし。検索結果の転載だけで確定せず、以下の一次ページ・公開データを確認しました。
 
@@ -39,7 +106,7 @@ Artificial Analysisの[7/9の5.6記事](https://artificialanalysis.ai/articles/g
 
 LiveBenchも調査しましたが、取得した一次ページでは必要な思考量別全行を確認できませんでした。転載サイトの重み付きAgent Fitを独立実測と扱わず、今回の数値判断から除外しました。OpenAI発表のDeepSWE結果も、Datacurveのmini-swe-agent実測と混同しません。
 
-## 追加根拠1：Artificial Analysisの個別開発課題
+### 追加根拠1：Artificial Analysisの個別開発課題
 
 一次表：[6.1 Sol対Astra](https://artificialanalysis.ai/models/releases/comparisons/gpt-6-1-sol-vs-gpt-6-astra)、[6.1 Terra対6 Luna](https://artificialanalysis.ai/models/releases/comparisons/gpt-6-1-terra-vs-gpt-6-luna)。low / medium / high / xhigh / max順、成功率%。比較ページの取得時値で、恒久的に固定されたスコアではありません。
 
@@ -54,7 +121,7 @@ LiveBenchも調査しましたが、取得した一次ページでは必要な�
 
 同ページのTime per Taskは主に出力トークン数と計測された出力速度からの計算値で、OpenCodeの実作業の総所要時間ではありません。速度は直近5日等で更新されるため、費用・時間とも参照時のスナップショットとして扱います。
 
-## 追加根拠2：Datacurve DeepSWEの思考量sweep
+### 追加根拠2：Datacurve DeepSWEの思考量sweep
 
 公開JSONの`pass_at_1`を%へ変換し、小数2桁へ丸めました。順序はlow / medium / high / xhigh / max。API費用はJSONの未再価格計算値です（サイト表示は現行価格へ補正する場合があるので一致しないことがあります）。古い費用で現在のサブスク消費や請求額は予測しません。
 
@@ -68,7 +135,7 @@ LiveBenchも調査しましたが、取得した一次ページでは必要な�
 
 4回は同じ113課題の反復で、452個の独立課題ではありません。例えばAstraのmedium/high/xhighの公表95%区間は約±2.59/3.42/2.87ポイントで差より大きく、順位だけで有意な優越とは言えません。timeoutとcontext失敗は不合格、provider/verifier/networkエラーは除外。VulcanBenchとはエラー処理もharnessも違います。JSONに6.1 Sol／Terra、6 Sol／Lunaの全思考量データはないので推測しません。
 
-## 追加根拠3：Hexでの反証
+### 追加根拠3：Hexでの反証
 
 DataBench v1.1の成功率%、同じ思考量順。表にないmaxは未掲載であり0点ではありません。
 
@@ -84,7 +151,7 @@ DataBench v1.1の成功率%、同じ思考量順。表にないmaxは未掲載�
 
 6.1 Terraと5.5はこの取得表にないため、結果を補いません。解析はコード修正とは違う仕事なので、Hexだけで開発向けのmaxを全廃する判断もしません。v1紹介記事の「全モデル50%以上」という記述はv1.1への較正変更前で、現在表とは混ぜません。
 
-## 9系列それぞれの判断
+### 9系列それぞれの判断
 
 1. **6.1 Sol：Very Highをxhighへ修正。** VulcanBenchの23/23の飽和を、一般の開発課題でhigh以上が不要な証拠にしていた点を訂正。AAの両coding評価ではhigh→xhigh→maxと改善するため上位設定を残します。一方、maxはxhighよりIndex全体費用が約67%増え、両coding成績は各2.1ポイント増。Hexはmediumが最高。最難の既定をxhighとする折衷であり、maxが無価値という判断ではありません。
 2. **6.1 Terra：維持。** AAでもTerminal-Benchのxhigh→maxが46.5→55.6%、FrontierCodeは36.9→42.3%で、最難maxを複数課題群が支持。Low=highは難しめの開発課題への品質寄りの設計であり、mediumが日常作業で不十分という実証ではありません。
@@ -96,7 +163,7 @@ DataBench v1.1の成功率%、同じ思考量順。表にないmaxは未掲載�
 8. **5.6 Luna：維持。** DeepSWEでhigh 44.25→xhigh 56.86→max 67.19%と改善。low/mediumとの差が大きく、Lowからhigh、最難maxの品質寄り方針を支持。ただしmaxの費用・時間も増えるので、通常作業へ一律maxを適用しません。
 9. **5.5：維持。** DeepSWEはhigh 64.38%、xhigh 67.04%で、VulcanBenchと同じ方向。最難xhigh、max非対応は維持。Sonarではmediumでも78.66%のJava課題が合格しており、難しいSWE課題の低得点から「mediumでは何もできない」と一般化しません。Low=highも品質寄りの暫定選択です。
 
-## 残る限界
+### 残る限界
 
 - ベンチマーク点数は異なる課題・分母・harness・判定方法を持つため、平均や多数決で最適値を決めていません。共通課題の重複にも注意しています。
 - 4難易度ラベルで層別化された、9モデル全体の品質・費用データはありません。難易度分類の誤りや分野差も残ります。Very Low=lowの全モデル共通維持も設計判断です。

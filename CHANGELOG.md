@@ -2,8 +2,9 @@
 
 ## Unreleased（2026-11-18）
 
-- OpenAIカタログ98項目を確認し、reasoning effortを持つ32系列すべてにモデル別ポリシーを追加。r2の9系列は`benchmark-2026-11-09-r2`のまま維持し、思考量別sweepを追加確認した12系列を`benchmark-2026-11-18-r1`へ昇格、残り11系列は`heuristic-2026-11-18`として能力クラスから設計。3者を状態の`policy`で区別。
-- 追加12系列はLiveBenchの生の思考量別行、OckBench、Artificial Analysis Intelligence Index v5.0.1を参照。GPT-6.2 Sol／Astra、GPT-5.4、GPT-5.4 mini／nano、GPT-5.3 Codex、GPT-5.2、GPT-5.1、GPT-5、GPT-5 mini／nano、o3を個別ポリシー化。GPT-5.4はLow=low／High=medium、GPT-5.2／5.1／5／5 mini／5 nano／o3はVery High=high、GPT-5.4系とCodexはVery High=xhigh。
+- OpenAIカタログ98項目を確認し、reasoning effortを持つ32系列すべてにモデル別ポリシーを追加。複数ベンチマークで再検討した14系列（既存9系列の`benchmark-2026-11-09-r2`と新規5系列の`benchmark-2026-11-18-r2`）、思考量別sweepを1つだけ確認した7系列（`benchmark-2026-11-18-r1`）、残り11系列（`heuristic-2026-11-18`）を状態の`policy`で区別。
+- 追加12系列をLiveBenchの生の思考量別行、OckBench、Artificial Analysisの個別coding評価、Cognition FrontierCodeで再検討。GPT-6.2 Sol／Astra、GPT-5.4、GPT-5.4 mini、GPT-5.2の5系列を`benchmark-2026-11-18-r2`へ昇格。GPT-6.2 SolのVery Highのみxhigh→maxへ修正し、他4系列はプロファイルを維持。6.2 SolはAAのTerminal-Bench 4.0とFrontierCode-AA 2.0の両方でmaxがxhighを上回り、Astraはxhighが同等以上でした。
+- GPT-5.4 nano、GPT-5.3 Codex、GPT-5.1、GPT-5、GPT-5 mini／nano、o3の7系列は思考量別sweepが1つだけのため`benchmark-2026-11-18-r1`に残し、単一ソースの暫定ポリシーとして明記。単点（5.4のDeepSWE xhigh、5 miniのOckBench-Math high）は2つ目のsweepとして数えない。
 - 残る11系列（GPT-6 Cyber、Daybreak、GPT-5.6 Cyber、GPT-5.6、GPT-5.5 Pro、GPT-5.4 Pro、GPT-5.2 Pro、GPT-5 Pro、o3 Pro、GPT-5.3 Codex Spark）は、同条件の思考量別sweepがないためfrontier／compactの暫定表を維持。ヒューリスティック行は`max`を自動選択しない。
 - Fast／Flex／Pro／UltrafastはカタログAPIの`modelID`が同じ場合に同じ表を適用。`gpt-5.6`を`gpt-5.6-sol`へ、Daybreakを別モデルへ読み替えるような名前推測は行わない。
 - カタログvariantによる切上げ（Pro系のmedium下限、旧系列のhigh上限、`gpt-5-pro`のhigh固定）をテストで確認。reasoning variantを持たないモデルは引き続き変更しない。

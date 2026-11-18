@@ -169,13 +169,13 @@ function effectiveEffort(desired: string, levels: readonly string[]): string {
 const frontier = ["low", "medium", "high", "xhigh"] as const;
 const compact = ["low", "low", "medium", "high"] as const;
 for (const [modelID, expected, levels, suffixes, version] of [
-  ["gpt-6.2-sol", frontier, ["low", "medium", "high", "xhigh", "max"], ["", "-fast", "-pro", "-ultrafast"], "benchmark-2026-11-18-r1"],
-  ["gpt-6.2-astra", frontier, ["low", "medium", "high", "xhigh", "max"], ["", "-fast", "-pro", "-ultrafast"], "benchmark-2026-11-18-r1"],
-  ["gpt-5.4", ["low", "low", "medium", "xhigh"], ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r1"],
-  ["gpt-5.4-mini", ["low", "medium", "high", "xhigh"], ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r1"],
+  ["gpt-6.2-sol", ["low", "medium", "high", "max"], ["low", "medium", "high", "xhigh", "max"], ["", "-fast", "-pro", "-ultrafast"], "benchmark-2026-11-18-r2"],
+  ["gpt-6.2-astra", frontier, ["low", "medium", "high", "xhigh", "max"], ["", "-fast", "-pro", "-ultrafast"], "benchmark-2026-11-18-r2"],
+  ["gpt-5.4", ["low", "low", "medium", "xhigh"], ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r2"],
+  ["gpt-5.4-mini", ["low", "medium", "high", "xhigh"], ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r2"],
   ["gpt-5.4-nano", ["low", "medium", "high", "xhigh"], ["low", "medium", "high", "xhigh"], ["", "-flex"], "benchmark-2026-11-18-r1"],
   ["gpt-5.3-codex", frontier, ["low", "medium", "high", "xhigh"], ["", "-fast"], "benchmark-2026-11-18-r1"],
-  ["gpt-5.2", ["low", "medium", "high", "high"], ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r1"],
+  ["gpt-5.2", ["low", "medium", "high", "high"], ["low", "medium", "high", "xhigh"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r2"],
   ["gpt-5.1", ["low", "medium", "high", "high"], ["low", "medium", "high"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r1"],
   ["gpt-5", ["low", "low", "high", "high"], ["low", "medium", "high"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r1"],
   ["gpt-5-mini", ["low", "low", "high", "high"], ["low", "medium", "high"], ["", "-fast", "-flex"], "benchmark-2026-11-18-r1"],

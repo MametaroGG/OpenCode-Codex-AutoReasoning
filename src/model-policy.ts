@@ -21,21 +21,29 @@ const measured: Readonly<Record<string, Profile>> = {
   "gpt-5.5": { "Very Low": "low", Low: "high", High: "xhigh", "Very High": "xhigh" },
 };
 
-// Families with a public effort sweep that is not part of the r2 review:
-// LiveBench raw effort rows (not the aggregator's weighted "agent fit"),
-// OckBench, and the Artificial Analysis Intelligence Index. The curves drive
-// the upper tiers; Very Low stays low because no sweep is stratified by the
-// four local labels. These are benchmark-anchored policy choices, not
-// measured optima. See docs/MODEL-POLICIES.md.
-const benchmarkVersion = "benchmark-2026-11-18-r1";
-const benchmark: Readonly<Record<string, Profile>> = {
-  "gpt-6.2-sol": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
+// 2026-11-18 multi-benchmark review of newly supported families. Each row was
+// compared across at least two independent effort sweeps (different benchmark
+// owners, or AA's separate Terminal-Bench/FrontierCode task suites). These are
+// benchmark-anchored policy choices, not measured optima for the four local
+// difficulty labels. See docs/MULTI-BENCHMARK-REVIEW.md.
+const measured20261118Version = "benchmark-2026-11-18-r2";
+const measured20261118: Readonly<Record<string, Profile>> = {
+  "gpt-6.2-sol": { "Very Low": "low", Low: "medium", High: "high", "Very High": "max" },
   "gpt-6.2-astra": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
   "gpt-5.4": { "Very Low": "low", Low: "low", High: "medium", "Very High": "xhigh" },
   "gpt-5.4-mini": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
+  "gpt-5.2": { "Very Low": "low", Low: "medium", High: "high", "Very High": "high" },
+};
+
+// Families with only one public effort sweep so far: LiveBench raw effort rows
+// (not the aggregator's weighted "agent fit"), OckBench, or Artificial Analysis.
+// A single sweep can anchor a shape but cannot confirm it across independent
+// benchmarks. Very Low stays low because no sweep is stratified by the four
+// local labels. See docs/MODEL-POLICIES.md.
+const benchmarkVersion = "benchmark-2026-11-18-r1";
+const benchmark: Readonly<Record<string, Profile>> = {
   "gpt-5.4-nano": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
   "gpt-5.3-codex": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
-  "gpt-5.2": { "Very Low": "low", Low: "medium", High: "high", "Very High": "high" },
   "gpt-5.1": { "Very Low": "low", Low: "medium", High: "high", "Very High": "high" },
   "gpt-5": { "Very Low": "low", Low: "low", High: "high", "Very High": "high" },
   "gpt-5-mini": { "Very Low": "low", Low: "low", High: "high", "Very High": "high" },
@@ -69,6 +77,10 @@ function findProfile(modelID: string | undefined): { profile: Profile; policy: s
   if (Object.hasOwn(measured, modelID)) {
     const profile = measured[modelID];
     if (profile) return { profile, policy: `${measuredVersion}:${modelID}` };
+  }
+  if (Object.hasOwn(measured20261118, modelID)) {
+    const profile = measured20261118[modelID];
+    if (profile) return { profile, policy: `${measured20261118Version}:${modelID}` };
   }
   if (Object.hasOwn(benchmark, modelID)) {
     const profile = benchmark[modelID];
