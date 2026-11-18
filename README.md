@@ -45,6 +45,8 @@ npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --igno
       "package": "C:/path/to/auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning",
       "options": {
         "classifierModel": "openai/gpt-6-luna#low",
+        // "minEffort": "low",   // 下限（既定 low）
+        // "maxEffort": "xhigh", // 上限（既定 max）
         "allowModelRequests": false
       }
     }
@@ -52,7 +54,7 @@ npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --igno
 }
 ```
 
-`package`はインストール先の**絶対パス**。保存後`/reload`し、次の新しい指示から適用。明示variant・既存の思考量設定・手動指定は保持されます。
+`package`はインストール先の**絶対パス**。保存後`/reload`し、次の新しい指示から適用。明示variant・既存の思考量設定・手動指定は保持されます。`minEffort` / `maxEffort`は任意で、既定は`low` / `max`です。
 
 ## 要点
 

@@ -45,6 +45,8 @@ Add to the `plugins` array of `opencode.jsonc`. Do not replace your existing con
       "package": "C:/path/to/auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning",
       "options": {
         "classifierModel": "openai/gpt-6-luna#low",
+        // "minEffort": "low",   // lower bound (default low)
+        // "maxEffort": "xhigh", // upper bound (default max)
         "allowModelRequests": false
       }
     }
@@ -52,7 +54,7 @@ Add to the `plugins` array of `opencode.jsonc`. Do not replace your existing con
 }
 ```
 
-Set `package` to the **absolute path** of the installation directory. Save, run `/reload`, and use it from the next new instruction. Explicit variants, existing effort settings and manual overrides are preserved.
+Set `package` to the **absolute path** of the installation directory. Save, run `/reload`, and use it from the next new instruction. Explicit variants, existing effort settings and manual overrides are preserved. `minEffort` / `maxEffort` are optional and default to `low` / `max`.
 
 ## At a glance
 
