@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased（2026-11-18）
+## 0.2.1 — 試用版（2026-11-18）
 
 - OpenAIカタログ98項目を確認し、reasoning effortを持つ32系列すべてにモデル別ポリシーを追加。複数ベンチマークで再検討した14系列（既存9系列の`benchmark-2026-11-09-r2`と新規5系列の`benchmark-2026-11-18-r2`）、思考量別sweepを1つだけ確認した7系列（`benchmark-2026-11-18-r1`）、残り11系列（`heuristic-2026-11-18`）を状態の`policy`で区別。
 - 追加12系列をLiveBenchの生の思考量別行、OckBench、Artificial Analysisの個別coding評価、Cognition FrontierCodeで再検討。GPT-6.2 Sol／Astra、GPT-5.4、GPT-5.4 mini、GPT-5.2の5系列を`benchmark-2026-11-18-r2`へ昇格。GPT-6.2 SolのVery Highのみxhigh→maxへ修正し、他4系列はプロファイルを維持。6.2 SolはAAのTerminal-Bench 4.0とFrontierCode-AA 2.0の両方でmaxがxhighを上回り、Astraはxhighが同等以上でした。
@@ -10,6 +10,7 @@
 - カタログvariantによる切上げ（Pro系のmedium下限、旧系列のhigh上限、`gpt-5-pro`のhigh固定）をテストで確認。reasoning variantを持たないモデルは引き続き変更しない。
 - README、モデル別ポリシー、検証記録を更新。実モデル呼び出しは0回で、ヒューリスティック表の最適性・節約効果を測定したものではない。
 - テストは146件成功。型検査、ビルド、オフラインbenchmark、tarball検証も成功。
+- 配布物は`opencode-auto-reasoning-0.2.1.tgz`と`SHA256SUMS`。npmレジストリは引き続き未公開（`private: true`）。公開済みv0.2.0のタグ・添付ファイルは変更しない。Lunaの判定promptは2026-11-08の精度測定から変更しておらず、[ACCURACY.md](docs/ACCURACY.md)の44/48（91.7%）を引き継ぐ。
 
 ## 0.2.0 — 試用版（2026-11-09）
 

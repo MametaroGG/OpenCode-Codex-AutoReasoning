@@ -1,17 +1,34 @@
 {
   "name": "opencode-auto-reasoning",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "license": "MIT",
   "author": "MametaroGG",
-  "repository": { "type": "git", "url": "git+https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning.git"
+  },
   "homepage": "https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning#readme",
-  "bugs": { "url": "https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues" },
+  "bugs": {
+    "url": "https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues"
+  },
   "description": "OpenAI-only, fail-safe reasoning effort selection with Luna for OpenCode V2",
   "type": "module",
-  "exports": { ".": "./dist/index.js", "./rpc": "./dist/rpc.js", "./tui": "./dist/tui.js" },
-  "files": ["dist", "README.md", "CHANGELOG.md", "docs", "examples"],
-  "engines": { "node": ">=22" },
+  "exports": {
+    ".": "./dist/index.js",
+    "./rpc": "./dist/rpc.js",
+    "./tui": "./dist/tui.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "docs",
+    "examples"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "node scripts/clean-obsolete.mjs && tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc -p tsconfig.tests.json",
@@ -21,6 +38,12 @@
     "evaluate:live": "tsx scripts/evaluate-live.ts",
     "release:pack": "npm run build && node scripts/package-release.mjs"
   },
-  "dependencies": { "@opencode/plugin": "2.2.6" },
-  "devDependencies": { "@types/node": "^22.0.0", "tsx": "^4.20.0", "typescript": "^5.9.0" }
+  "dependencies": {
+    "@opencode/plugin": "2.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
 }
