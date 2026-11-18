@@ -2,7 +2,7 @@
 
 ## 0.2.4 — npm公開（最終名，2026-11-18）
 
-- npmパッケージ名を最終名の`opencode-codex-autoreasoning`へ変更。`opencode-codex-reasoning`として用意した0.2.3もnpmには公開されず、この名前も空きでした。0.2.3のGitHub Release・タグは公開済みのため変更せず、0.2.4として再公開します。
+- npmパッケージ名を最終名の`opencode-codex-autoreasoning`へ変更。`opencode-codex-reasoning`として用意した0.2.3もnpmには公開されず、この名前も空きでした。0.2.3のGitHub Release・タグは公開済みのため変更せず、0.2.4として正式名で公開しました。
 - `package.json`・lockfile・README・リリースノート・配布検証スクリプトの名前とインストール手順を更新。GitHub Releasesのtgz名も`opencode-codex-autoreasoning-0.2.4.tgz`です。
 - Lunaの精度・モデル別ポリシー・テスト146件の結果は変更なし。監査警告はmoderate 23件・high 5件・criticalなし。
 

@@ -1,6 +1,6 @@
 # v0.2.4 — npm公開（Preview）
 
-OpenCode V2向けの自動思考量調整プラグインの試用版です。GPT-6 Lunaが課題の難易度を判定し、ユーザーが選んだOpenAI開発モデルに応じて思考量を選びます。開発モデル自体は変更しません。**npmレジストリでは `opencode-codex-autoreasoning@0.2.4` として公開します。**
+OpenCode V2向けの自動思考量調整プラグインの試用版です。GPT-6 Lunaが課題の難易度を判定し、ユーザーが選んだOpenAI開発モデルに応じて思考量を選びます。開発モデル自体は変更しません。**npmレジストリでは `opencode-codex-autoreasoning@0.2.4` として公開しています。**
 
 ## v0.2.3からの変更
 
