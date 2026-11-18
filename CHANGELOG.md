@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- READMEの英語版`README.en.md`を追加し、日本語版と相互リンク。npm配布物にも英語版READMEを含めるようにした（次回公開から反映）。
+
 ## 0.2.4 — npm公開（最終名，2026-11-18）
 
 - npmパッケージ名を最終名の`opencode-codex-autoreasoning`へ変更。`opencode-codex-reasoning`として用意した0.2.3もnpmには公開されず、この名前も空きでした。0.2.3のGitHub Release・タグは公開済みのため変更せず、0.2.4として正式名で公開しました。
