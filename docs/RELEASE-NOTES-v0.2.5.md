@@ -1,5 +1,7 @@
 # v0.2.5 — SDK 2.3.2対応
 
+**Language:** 日本語 · [English](RELEASE-NOTES-v0.2.5.en.md)
+
 OpenCode V2向けの自動思考量調整プラグインです。GPT-6 Lunaが課題の難易度を判定し、ユーザーが選んだOpenAI開発モデルに応じて思考量を選びます。開発モデル自体は変更しません。npmレジストリでは`opencode-codex-autoreasoning`、GitHub Packagesでは`@mametarogg/opencode-codex-autoreasoning`として公開しています。
 
 ## v0.2.4からの変更

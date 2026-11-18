@@ -76,7 +76,7 @@ Set `package` to the **absolute path** of the installation directory. Save, run 
 | Options | [examples/opencode.jsonc](examples/opencode.jsonc) |
 | Luna classification accuracy | [ACCURACY.md](docs/ACCURACY.md) |
 | Validation status | [MODEL-POLICY-VALIDATION.md](docs/MODEL-POLICY-VALIDATION.md) |
-| Release notes | [RELEASE-NOTES-v0.2.5.md](docs/RELEASE-NOTES-v0.2.5.md) |
+| Release notes | [RELEASE-NOTES-v0.2.5.en.md](docs/RELEASE-NOTES-v0.2.5.en.md) |
 | Changelog and release process | [CHANGELOG.md](CHANGELOG.md) · [RELEASING.md](docs/RELEASING.md) |
 
 [MIT License](LICENSE) © 2026 MametaroGG · Not an official OpenCode or OpenAI project.
