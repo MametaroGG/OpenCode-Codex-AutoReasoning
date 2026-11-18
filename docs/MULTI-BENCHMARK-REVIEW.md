@@ -5,7 +5,7 @@
 VulcanBenchだけでは裏付けが弱かったため、独立した評価元・異なる課題群を比較しました。**3セルを修正し、6系列は維持**します。実装は`benchmark-2026-11-09-r2:<modelID>`で区別し、v0.2.0 Pre-releaseに含めます。公開済みv0.1.0は変更しません。
 
 > [!NOTE]
-> この文書が扱うのは、公開測定を参照した**9系列だけ**です。2026-11-18に追加したヒューリスティック23系列（GPT-6.2、Cyber、Daybreak、GPT-5.4以前の未測定系列など）は、ここで比較した思考量別sweepの対象外であり、能力クラスから設計した未測定ポリシーです。[MODEL-POLICIES.md](MODEL-POLICIES.md#ヒューリスティック23系列)で明確に区別しています。
+> この文書が扱うのは、複数評価を比較した**r2の9系列だけ**です。2026-11-18に追加した12系列（GPT-6.2、GPT-5.4系、GPT-5系、o3など）は、この文書とは別にLiveBench・OckBench・Artificial Analysis Indexの思考量別sweepで検証しています（`benchmark-2026-11-18-r1`）。Cyber／Daybreak／Pro系／GPT-5.6など残る11系列は、ここで比較した思考量別sweepの対象外であり、能力クラスから設計した未測定ポリシーです。[MODEL-POLICIES.md](MODEL-POLICIES.md)で明確に区別しています。
 
 | モデル | Very Low | Low | High | Very High | r1からの変更 |
 |---|---|---|---|---|---|

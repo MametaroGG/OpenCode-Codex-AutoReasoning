@@ -21,6 +21,28 @@ const measured: Readonly<Record<string, Profile>> = {
   "gpt-5.5": { "Very Low": "low", Low: "high", High: "xhigh", "Very High": "xhigh" },
 };
 
+// Families with a public effort sweep that is not part of the r2 review:
+// LiveBench raw effort rows (not the aggregator's weighted "agent fit"),
+// OckBench, and the Artificial Analysis Intelligence Index. The curves drive
+// the upper tiers; Very Low stays low because no sweep is stratified by the
+// four local labels. These are benchmark-anchored policy choices, not
+// measured optima. See docs/MODEL-POLICIES.md.
+const benchmarkVersion = "benchmark-2026-11-18-r1";
+const benchmark: Readonly<Record<string, Profile>> = {
+  "gpt-6.2-sol": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
+  "gpt-6.2-astra": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
+  "gpt-5.4": { "Very Low": "low", Low: "low", High: "medium", "Very High": "xhigh" },
+  "gpt-5.4-mini": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
+  "gpt-5.4-nano": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
+  "gpt-5.3-codex": { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" },
+  "gpt-5.2": { "Very Low": "low", Low: "medium", High: "high", "Very High": "high" },
+  "gpt-5.1": { "Very Low": "low", Low: "medium", High: "high", "Very High": "high" },
+  "gpt-5": { "Very Low": "low", Low: "low", High: "high", "Very High": "high" },
+  "gpt-5-mini": { "Very Low": "low", Low: "low", High: "high", "Very High": "high" },
+  "gpt-5-nano": { "Very Low": "low", Low: "low", High: "high", "Very High": "high" },
+  "o3": { "Very Low": "low", Low: "medium", High: "high", "Very High": "high" },
+};
+
 // Catalog families without a published effort sweep. These are deliberately
 // conservative, capability-class choices so every reasoning-capable OpenAI
 // model has a named policy instead of silently sharing the common fallback.
@@ -29,8 +51,6 @@ const heuristicVersion = "heuristic-2026-11-18";
 const frontier: Profile = { "Very Low": "low", Low: "medium", High: "high", "Very High": "xhigh" };
 const compact: Profile = { "Very Low": "low", Low: "low", High: "medium", "Very High": "high" };
 const heuristic: Readonly<Record<string, Profile>> = {
-  "gpt-6.2-sol": frontier,
-  "gpt-6.2-astra": frontier,
   "gpt-6-cyber": frontier,
   "gpt-daybreak-red-latest": frontier,
   "gpt-5.6-cyber": frontier,
@@ -38,20 +58,10 @@ const heuristic: Readonly<Record<string, Profile>> = {
   "gpt-5.6": frontier,
   "gpt-5.5-pro": frontier,
   "gpt-5.4-pro": frontier,
-  "gpt-5.4": frontier,
-  "gpt-5.4-mini": compact,
-  "gpt-5.4-nano": compact,
-  "gpt-5.3-codex": frontier,
   "gpt-5.3-codex-spark": compact,
   "gpt-5.2-pro": frontier,
-  "gpt-5.2": frontier,
-  "gpt-5.1": frontier,
   "gpt-5-pro": frontier,
-  "gpt-5": frontier,
-  "gpt-5-mini": compact,
-  "gpt-5-nano": compact,
   "o3-pro": frontier,
-  "o3": frontier,
 };
 
 function findProfile(modelID: string | undefined): { profile: Profile; policy: string } | undefined {
@@ -59,6 +69,10 @@ function findProfile(modelID: string | undefined): { profile: Profile; policy: s
   if (Object.hasOwn(measured, modelID)) {
     const profile = measured[modelID];
     if (profile) return { profile, policy: `${measuredVersion}:${modelID}` };
+  }
+  if (Object.hasOwn(benchmark, modelID)) {
+    const profile = benchmark[modelID];
+    if (profile) return { profile, policy: `${benchmarkVersion}:${modelID}` };
   }
   if (Object.hasOwn(heuristic, modelID)) {
     const profile = heuristic[modelID];

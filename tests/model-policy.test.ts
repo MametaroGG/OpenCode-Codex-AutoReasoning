@@ -26,8 +26,27 @@ for (const [modelID, expected] of [
 }
 
 for (const [modelID, expected] of [
-  ["gpt-6.2-sol", frontier],
-  ["gpt-6.2-astra", frontier],
+  ["gpt-6.2-sol", ["low", "medium", "high", "xhigh"]],
+  ["gpt-6.2-astra", ["low", "medium", "high", "xhigh"]],
+  ["gpt-5.4", ["low", "low", "medium", "xhigh"]],
+  ["gpt-5.4-mini", ["low", "medium", "high", "xhigh"]],
+  ["gpt-5.4-nano", ["low", "medium", "high", "xhigh"]],
+  ["gpt-5.3-codex", ["low", "medium", "high", "xhigh"]],
+  ["gpt-5.2", ["low", "medium", "high", "high"]],
+  ["gpt-5.1", ["low", "medium", "high", "high"]],
+  ["gpt-5", ["low", "low", "high", "high"]],
+  ["gpt-5-mini", ["low", "low", "high", "high"]],
+  ["gpt-5-nano", ["low", "low", "high", "high"]],
+  ["o3", ["low", "medium", "high", "high"]],
+] as const) {
+  test(`versioned benchmark policy (2026-11-18): ${modelID}`, () => {
+    assert.deepEqual(difficulties.map(d => modelEffort({ modelID }, d, defaults).effort), expected);
+    assert.equal(modelEffort({ modelID }, "High", defaults).policy, `benchmark-2026-11-18-r1:${modelID}`);
+    assert.equal(modelEffort({ modelID }, "Very High", { modelPolicy: "common" }).effort, "xhigh");
+  });
+}
+
+for (const [modelID, expected] of [
   ["gpt-6-cyber", frontier],
   ["gpt-daybreak-red-latest", frontier],
   ["gpt-5.6-cyber", frontier],
@@ -35,20 +54,10 @@ for (const [modelID, expected] of [
   ["gpt-5.6", frontier],
   ["gpt-5.5-pro", frontier],
   ["gpt-5.4-pro", frontier],
-  ["gpt-5.4", frontier],
-  ["gpt-5.3-codex", frontier],
   ["gpt-5.2-pro", frontier],
-  ["gpt-5.2", frontier],
-  ["gpt-5.1", frontier],
   ["gpt-5-pro", frontier],
-  ["gpt-5", frontier],
   ["o3-pro", frontier],
-  ["o3", frontier],
-  ["gpt-5.4-mini", compact],
-  ["gpt-5.4-nano", compact],
   ["gpt-5.3-codex-spark", compact],
-  ["gpt-5-mini", compact],
-  ["gpt-5-nano", compact],
 ] as const) {
   test(`versioned heuristic policy: ${modelID}`, () => {
     assert.deepEqual(difficulties.map(d => modelEffort({ modelID }, d, defaults).effort), expected);

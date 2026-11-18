@@ -1,10 +1,10 @@
-# モデル別思考量ポリシー（2026-11-18、測定9系列・ヒューリスティック23系列）
+# モデル別思考量ポリシー（2026-11-18、測定9系列・ベンチマーク基準12系列・ヒューリスティック11系列）
 
 ## 実装と根拠の区別
 
 Lunaは課題の難易度だけを分類し、その後、開発用モデルのカタログ`modelID`で対応表を選びます。判定prompt・JSON検証は変更していません。**以下は公開測定または能力クラスを参考に設計した暫定方針であり、難易度別の最適値を実証した表ではありません。** この変更で追加の実モデル呼び出しは行っていません。
 
-2026-11-18時点のOpenAIカタログ98項目を確認し、reasoning effortを持つ32のAPI `modelID`をすべて収録しました。内訳は、公開測定を参照した9系列（`benchmark-2026-11-09-r2`）と、公開された思考量sweepがない23系列（`heuristic-2026-11-18`）です。**ヒューリスティック行はベンチマーク結果ではなく、能力クラスに基づく暫定方針です。** 状態の`policy`欄で両者を区別できます。
+2026-11-18時点のOpenAIカタログ98項目を確認し、reasoning effortを持つ32のAPI `modelID`をすべて収録しました。内訳は、複数評価を比較した9系列（`benchmark-2026-11-09-r2`）、思考量別sweepを追加確認した12系列（`benchmark-2026-11-18-r1`）、公開sweepがない11系列（`heuristic-2026-11-18`）です。状態の`policy`欄で3者を区別できます。**3者とも、4つのローカル難易度ラベルごとの最適値を実証した表ではありません。**
 
 ### 公開測定に基づく9系列
 
@@ -24,14 +24,58 @@ VulcanBenchに加え、Datacurve DeepSWE、Artificial Analysisの個別coding評
 
 一覧の9系列はすべて、それぞれの一次報告を参照した個別ポリシーを持ちます。同じ対応表になる系列も、別々の測定に基づいて採用しています。世代や名称の類似だけで結果を流用しません。
 
-### ヒューリスティック23系列
+### 2026-11-18に追加したベンチマーク基準12系列
+
+GPT-5.4以前の系列とGPT-6.2は、公開されている思考量別sweepを確認できたため、能力クラスではなく曲線に基づく個別ポリシーへ昇格しました。LiveBenchの生の思考量別行（集計サイトの重み付き「Agent Fit」ではなく、Overall／Coding／Agentic Coding／Mathematics／Reasoning列）、OckBench、Artificial Analysis Intelligence Index v5.0.1を使用しています。
+
+| API modelID | Very Low | Low | High | Very High |
+|---|---|---|---|---|
+| gpt-6.2-sol | low | medium | high | xhigh |
+| gpt-6.2-astra | low | medium | high | xhigh |
+| gpt-5.4 | low | low | medium | xhigh |
+| gpt-5.4-mini | low | medium | high | xhigh |
+| gpt-5.4-nano | low | medium | high | xhigh |
+| gpt-5.3-codex | low | medium | high | xhigh |
+| gpt-5.2 | low | medium | high | high |
+| gpt-5.1 | low | medium | high | high |
+| gpt-5 | low | low | high | high |
+| gpt-5-mini | low | low | high | high |
+| gpt-5-nano | low | low | high | high |
+| o3 | low | medium | high | high |
+
+確認した思考量別スコア（低い順。値はOverallまたは総合Index、括弧内は補助指標）:
+
+| API modelID | ソース | 思考量別スコア |
+|---|---|---|
+| gpt-6.2-sol | Artificial Analysis Intelligence Index v5.0.1 | low 41 / medium 53 / high 55 / xhigh 56 / max 57 |
+| gpt-6.2-astra | 同上 | low 46 / medium 57 / high 60 / xhigh 62 / max 62 |
+| gpt-5.4 | LiveBench 2026-01-08 + OckBench | LiveBench high 75.07 / xhigh 80.28（Agentic Coding 46.7 / 70.0）。OckBench none 23.5 / low 78.0 / medium 82.0 / high 80.5 |
+| gpt-5.4-mini | LiveBench 2026-01-08 | low 49.54 / medium 58.33 / high 63.57 / xhigh 67.54（Agentic Coding 23.6 / 27.0 / 38.9 / 47.5） |
+| gpt-5.4-nano | LiveBench 2026-01-08 | low 48.67 / medium 58.46 / high 62.75 / xhigh 70.13（Mathematics 65.2 / 83.1 / 88.6 / 91.3） |
+| gpt-5.3-codex | LiveBench 2026-01-08 | high 72.76 / xhigh 71.64（Agentic Coding 55.0 / 66.7、Coding 78.2 / 77.5） |
+| gpt-5.2 | LiveBench 2026-01-08 | low 65.33 / medium 71.84 / high 74.84 |
+| gpt-5.1 | LiveBench 2026-01-08 | low 59.95 / medium 69.17 / high 72.04 |
+| gpt-5 | LiveBench 2025-05-30 | minimal 57.91 / low 74.65 / high 79.33（medium未掲載） |
+| gpt-5-mini | LiveBench 2026-01-08 | minimal 39.90 / low 53.07 / high 65.91（medium未掲載） |
+| gpt-5-nano | LiveBench 2026-01-08 | low 34.34 / high 48.62（medium未掲載） |
+| o3 | LiveBench 2025-04-25 | medium 79.25 / high 80.71（low未掲載） |
+
+- **6.2 Sol／Astra**：low→mediumが+12／+11で最大の改善。Solのmaxはxhigh比+1で、タスクあたり7.9分対5.1分。Astraはxhighとmaxが同点62で、10.7分対6.2分。最難は`xhigh`に留めます。
+- **5.4**：OckBenchではlow 78.0がすでに強く、medium 82.0が最高、highは80.5。一方LiveBenchはxhigh 80.28がhigh 75.07より高く、Agentic Codingも46.7→70.0。Lowはlow、Highはmedium、Very Highはxhighとします。
+- **5.4 mini／nano**：4水準とも単調に改善し、xhighが最高。miniのAgentic Codingは23.6→47.5、nanoのMathematicsは65.2→91.3。Very Highまでxhighを使います。
+- **5.3 Codex**：Overallはhighがわずかに高いものの、Agentic Codingは55.0→66.7、Codingはほぼ横ばい。coding modelとしてHigh／Very Highはxhighを維持します。low／mediumの同条件行がないため下位2段は従来設計のままです。
+- **5.2／5.1**：low→mediumが+6.5／+9.2。highが確認できた最高値で、xhighの同条件行はありません。Very Highもhighに留め、未測定のxhighを測定済みとして扱いません。
+- **5／5 mini／5 nano**：確認できたのは主にlowとhighで、差は+4.7／+12.8／+14.3。Lowはlow、HighとVery Highはhigh（各系列の上限）です。
+- **o3**：medium 79.25、high 80.71で差は小さく、highが上限。Lowはmedium、Very Highはhighです。
+
+**12系列とも、Very Lowはlow固定です。** これらのsweepは4つのローカル難易度ラベル別に層別されておらず、下位2段の一部は測定外の設計判断です。曲線の最高点をそのまま全ラベルへ適用せず、難易度が上がるほど思考量を増やす形に割り当てています。
+
+### ヒューリスティック11系列
 
 公開された思考量別の一次評価を確認できない系列は、能力クラスに基づく2種類の暫定表で明示的に収録します。未知IDの共通表へ黙って落とすのではなく、モデル名ごとに方針を固定するための措置です。
 
 | API modelID | クラス | Very Low | Low | High | Very High |
 |---|---|---|---|---|---|
-| gpt-6.2-sol | frontier | low | medium | high | xhigh |
-| gpt-6.2-astra | frontier | low | medium | high | xhigh |
 | gpt-6-cyber | frontier | low | medium | high | xhigh |
 | gpt-daybreak-red-latest | frontier | low | medium | high | xhigh |
 | gpt-5.6-cyber | frontier | low | medium | high | xhigh |
@@ -39,25 +83,15 @@ VulcanBenchに加え、Datacurve DeepSWE、Artificial Analysisの個別coding評
 | gpt-5.6 | frontier | low | medium | high | xhigh |
 | gpt-5.5-pro | frontier | low | medium | high | xhigh |
 | gpt-5.4-pro | frontier | low | medium | high | xhigh |
-| gpt-5.4 | frontier | low | medium | high | xhigh |
-| gpt-5.3-codex | frontier | low | medium | high | xhigh |
 | gpt-5.2-pro | frontier | low | medium | high | xhigh |
-| gpt-5.2 | frontier | low | medium | high | xhigh |
-| gpt-5.1 | frontier | low | medium | high | xhigh |
 | gpt-5-pro | frontier | low | medium | high | xhigh |
-| gpt-5 | frontier | low | medium | high | xhigh |
 | o3-pro | frontier | low | medium | high | xhigh |
-| o3 | frontier | low | medium | high | xhigh |
-| gpt-5.4-mini | compact | low | low | medium | high |
-| gpt-5.4-nano | compact | low | low | medium | high |
 | gpt-5.3-codex-spark | compact | low | low | medium | high |
-| gpt-5-mini | compact | low | low | medium | high |
-| gpt-5-nano | compact | low | low | medium | high |
 
-- **frontier**：新しい上位系列とPro系。Very Highでも`max`を自動選択せず`xhigh`に留め、未測定の待ち時間・利用枠消費を避けます。必要なら`manualOverride: "max"`で明示できます。
-- **compact**：mini / nano / spark系。通常の編集で上位思考量を使いすぎないよう、`high`を上限にします。カタログが`xhigh`や`max`に対応していても、この表では自動選択しません。
+- **frontier**：Cyber／Daybreak、GPT-5.6、Pro系。Very Highでも`max`を自動選択せず`xhigh`に留め、未測定の待ち時間・利用枠消費を避けます。必要なら`manualOverride: "max"`で明示できます。
+- **compact**：Codex Spark。通常の編集で上位思考量を使いすぎないよう、`high`を上限にします。
 
-**ヒューリスティック行の根拠は、モデル名・カタログ上のfamily・公開されている位置付けだけです。** 個別の思考量別成功率、難易度別の最適値、実利用での費用対効果を測定したものではありません。また、GPT-6.2 Sol／AstraについてはArtificial Analysis等で思考量別の集計値が公開されていますが、4難易度の課題層別sweepではないため、集計Indexから難易度別の最適値を逆算していません。VulcanBenchの確認した最新一覧にもGPT-6.2の行はありませんでした。
+**ヒューリスティック行の根拠は、モデル名・カタログ上のfamily・公開されている位置付けだけです。** Cyber／Daybreakは公開評価が最高思考量に固定されており、思考量別の比較がありません。Pro系は同一baseの`reasoning.mode: "pro"`ですが、pro mode側の思考量別sweepが公開されていないため、base系列の曲線をそのまま流用しません。GPT-5.6もSol／Terra／Lunaとは別のAPI `modelID`で、同条件のsweepを確認できませんでした。
 
 ## API modelIDとサービス階層
 
@@ -114,17 +148,19 @@ VulcanBenchに加え、Datacurve DeepSWE、Artificial Analysisの個別coding評
 
 ### 限界
 
-これは23個のlegacy binary再構築課題で、一般的な開発作業や4難易度ラベルを網羅しません。単回試験、課題の偏り、世代・CLI・品質protocolの違いがあり、表を厳密なモデル間ランキングとして扱えません。品質評価は一部LLM採点で、人間による品質保証ではありません。複合スコアは機能50%、lint/complexity 8.5%、security 8.5%、Code quality 33%です。
+r2の9系列はVulcanBenchの23個のlegacy binary再構築課題などを中心とし、一般的な開発作業や4難易度ラベルを網羅しません。単回試験、課題の偏り、世代・CLI・品質protocolの違いがあり、表を厳密なモデル間ランキングとして扱えません。品質評価は一部LLM採点で、人間による品質保証ではありません。VulcanBenchの複合スコアは機能50%、lint/complexity 8.5%、security 8.5%、Code quality 33%です。
 
 課金値はAPI換算推定で、実際のサブスク請求ではありません。Lunaのtimeout分の費用は欠落しており総費用には使えません。OpenCodeとCodexのharnessは異なります。r2では複数の独立評価を比較しましたが、節約・精度・開発品質の改善を本プラグインで実測したものではありません。
 
-**ヒューリスティック23系列には、そもそもこの種の思考量別測定がありません。** クラス分けは公開情報とカタログ上の位置付けによる設計判断で、最適性・費用・待ち時間を保証しません。新しい一次評価が公開された場合は、測定行へ昇格させるか表を改訂してください。
+**2026-11-18の12系列も、4難易度ラベル別の最適値を示すものではありません。** LiveBenchのOverallは分野をまたぐ編集的な総合値で、実装作業の成功率そのものではありません。OckBenchは200問、Artificial Analysis Indexは9評価の複合値です。思考量が上がるとOverallが下がる系列（5.3 Codex）もあり、coding／agentic列との食い違いを単一スコアへ平均していません。同条件の行がない水準（例：5.2のxhigh、5／5 mini／5 nanoのmedium）は測定済みとして扱わず、ポリシーでも未使用または保守的に据え置いています。
+
+**ヒューリスティック11系列には、そもそもこの種の思考量別測定がありません。** クラス分けは公開情報とカタログ上の位置付けによる設計判断で、最適性・費用・待ち時間を保証しません。新しい一次評価が公開された場合は、ベンチマーク行へ昇格させるか表を改訂してください。
 
 ## 互換性・制御
 
-- `modelPolicy: "benchmark"`では、測定9系列とヒューリスティック23系列の両方を使います。`"common"`で従来の共通表へ戻せます。
-- 状態の`policy`は、測定行が`benchmark-2026-11-09-r2:<modelID>`、ヒューリスティック行が`heuristic-2026-11-18:<modelID>`、未知IDが`common:no-model-evidence`です。
-- `maxEffort`の既定は`xhigh`から`max`へ変更済みです。ヒューリスティック行は`max`を自動選択しませんが、`manualOverride`や`minEffort`/`maxEffort`の設定は通常どおり適用されます。
+- `modelPolicy: "benchmark"`では、r2の9系列、2026-11-18の12系列、ヒューリスティック11系列を使います。`"common"`で従来の共通表へ戻せます。
+- 状態の`policy`は、r2行が`benchmark-2026-11-09-r2:<modelID>`、2026-11-18行が`benchmark-2026-11-18-r1:<modelID>`、ヒューリスティック行が`heuristic-2026-11-18:<modelID>`、未知IDが`common:no-model-evidence`です。
+- `maxEffort`の既定は`xhigh`から`max`へ変更済みです。2026-11-18の12系列とヒューリスティック行は`max`を自動選択しませんが、`manualOverride`や`minEffort`/`maxEffort`の設定は通常どおり適用されます。
 - ポリシー適用後に、実カタログの対応思考量とmin/maxを適用します。範囲内で切り上げ、なければ範囲内の最大対応値。例：max非対応ならxhigh、Pro系でlow要求ならmediumへ。範囲内の対応値がなければ変更しません。
 - `none`は自動選択・プラグイン設定の対象外。明示variantや既存request overrideの`none`は保持します。既存`minimal`対応は維持します。
 - 手動指定、明示variant、既存request override、非OpenAI除外、失敗時の元設定保持の優先順位は変更しません。
