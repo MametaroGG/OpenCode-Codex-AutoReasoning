@@ -29,10 +29,16 @@ flowchart LR
 ## Installation
 
 ```powershell
+npm i opencode-codex-autoreasoning --ignore-scripts
+```
+
+Omitting the version installs `latest`. Pin a version only if needed. To keep it out of your project's dependencies, install into a dedicated folder instead:
+
+```powershell
 npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts
 ```
 
-Omitting the version installs `latest`. Pin a version only if needed. Other channels: [GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/latest) · [GitHub Packages](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning)
+Other channels: [GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/latest) · [GitHub Packages](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning)
 
 ## Register with OpenCode
 
@@ -42,7 +48,7 @@ Add to the `plugins` array of `opencode.jsonc`. Do not replace your existing con
 {
   "plugins": [
     {
-      "package": "C:/path/to/auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning",
+      "package": "C:/path/to/your-project/node_modules/opencode-codex-autoreasoning",
       "options": {
         "classifierModel": "openai/gpt-6-luna#low",
         // "minEffort": "low",   // lower bound (default low)
@@ -54,7 +60,7 @@ Add to the `plugins` array of `opencode.jsonc`. Do not replace your existing con
 }
 ```
 
-Set `package` to the **absolute path** of the installation directory. Save, run `/reload`, and use it from the next new instruction. Explicit variants, existing effort settings and manual overrides are preserved. `minEffort` / `maxEffort` are optional and default to `low` / `max`.
+Set `package` to the **absolute path** of the installation directory (`node_modules/opencode-codex-autoreasoning` after `npm i`, or `auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning` with `--prefix`). For GitHub Packages use `node_modules/@mametarogg/opencode-codex-autoreasoning`. Save, run `/reload`, and use it from the next new instruction. Explicit variants, existing effort settings and manual overrides are preserved. `minEffort` / `maxEffort` are optional and default to `low` / `max`.
 
 ## At a glance
 

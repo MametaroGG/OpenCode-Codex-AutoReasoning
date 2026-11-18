@@ -88,10 +88,10 @@ ReleaseからtgzとSHA256SUMSをダウンロードし、SHA-256を確認して�
 
 ```powershell
 # npmレジストリから（推奨）
-npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts   # 固定したい場合は @0.2.4 を付ける
+npm i opencode-codex-autoreasoning --ignore-scripts   # 固定したい場合は @<version> を付ける
 
 # GitHub Releasesのtgzから（SHA-256照合後）
-npm install --prefix ./auto-reasoning-plugin ./opencode-codex-autoreasoning-0.2.4.tgz --ignore-scripts
+npm install --prefix ./auto-reasoning-plugin ./opencode-codex-autoreasoning-<version>.tgz --ignore-scripts
 ```
 
 OpenCodeの既存`plugins`へ、インストール先の `auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning` の絶対パスを追加します。送信・費用を確認してから `allowModelRequests: true` にします。他の設定は [README](../README.md) を参照してください。

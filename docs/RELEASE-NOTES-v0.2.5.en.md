@@ -13,10 +13,10 @@ An OpenCode V2 plugin that classifies task difficulty with GPT-6 Luna and adjust
 
 ## Installation
 
-Omitting the version installs npm's `latest` tag. Pin a version only if you need reproducibility.
+Omitting the version installs npm's `latest` tag. Pin a version only if you need reproducibility. To keep it out of your project's dependencies, use `npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts` instead.
 
 ```powershell
-npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts
+npm i opencode-codex-autoreasoning --ignore-scripts
 ```
 
 GitHub Packages requires authentication with `read:packages`:

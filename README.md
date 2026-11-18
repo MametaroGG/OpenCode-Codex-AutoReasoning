@@ -29,10 +29,16 @@ flowchart LR
 ## インストール
 
 ```powershell
+npm i opencode-codex-autoreasoning --ignore-scripts
+```
+
+バージョン指定を省くと`latest`を入ります。固定したい場合のみバージョンを付けてください。プロジェクトの依存を追加したくない場合は専用フォルダへ入れることもできます:
+
+```powershell
 npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts
 ```
 
-バージョン指定を省くと`latest`を入ります。固定したい場合のみバージョンを付けてください。他経路:[GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/latest) · [GitHub Packages](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning)
+他経路:[GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/latest) · [GitHub Packages](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning)
 
 ## OpenCodeに登録
 
@@ -42,7 +48,7 @@ npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --igno
 {
   "plugins": [
     {
-      "package": "C:/path/to/auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning",
+      "package": "C:/path/to/your-project/node_modules/opencode-codex-autoreasoning",
       "options": {
         "classifierModel": "openai/gpt-6-luna#low",
         // "minEffort": "low",   // 下限（既定 low）
@@ -54,7 +60,7 @@ npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --igno
 }
 ```
 
-`package`はインストール先の**絶対パス**。保存後`/reload`し、次の新しい指示から適用。明示variant・既存の思考量設定・手動指定は保持されます。`minEffort` / `maxEffort`は任意で、既定は`low` / `max`です。
+`package`はインストール先の**絶対パス**（`npm i`なら`node_modules/opencode-codex-autoreasoning`、専用フォルダを使う場合は`auto-reasoning-plugin/node_modules/opencode-codex-autoreasoning`）。GitHub Packagesの場合は`node_modules/@mametarogg/opencode-codex-autoreasoning`です。保存後`/reload`し、次の新しい指示から適用。明示variant・既存の思考量設定・手動指定は保持されます。`minEffort` / `maxEffort`は任意で、既定は`low` / `max`です。
 
 ## 要点
 

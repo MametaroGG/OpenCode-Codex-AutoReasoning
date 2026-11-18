@@ -15,12 +15,12 @@ OpenCode V2向けの自動思考量調整プラグインです。GPT-6 Lunaが�
 
 ## インストール
 
-バージョン指定を省くとnpmの`latest`を入ります。再現性が必要な場合のみバージョンを固定してください。
+バージョン指定を省くとnpmの`latest`を入ります。再現性が必要な場合のみバージョンを固定してください。プロジェクトの依存を追加したくない場合は`npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts`も使えます。
 
 npmレジストリから:
 
 ```powershell
-npm install --prefix ./auto-reasoning-plugin opencode-codex-autoreasoning --ignore-scripts
+npm i opencode-codex-autoreasoning --ignore-scripts
 ```
 
 GitHub Packagesから（`read:packages`権限の認証が必要）:
