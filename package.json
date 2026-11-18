@@ -1,6 +1,6 @@
 {
   "name": "opencode-codex-autoreasoning",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -42,7 +42,7 @@
     "release:pack": "npm run build && node scripts/package-release.mjs"
   },
   "dependencies": {
-    "@opencode/plugin": "2.2.6"
+    "@opencode/plugin": "2.3.2"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

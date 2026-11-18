@@ -9,8 +9,8 @@
 | npm run build | 成功 |
 | npm run benchmark | 成功。固定応答の検証・キャッシュ・保持上限のみ |
 | npm run verify:package | オフラインで実tarballをインストールし、モックホスト検証成功 |
-| npm run release:pack | 成功。`opencode-codex-autoreasoning-0.2.4.tgz`と`SHA256SUMS`をローカル生成、公開なし |
-| npm publish + npm install | 成功。`opencode-codex-autoreasoning@0.2.4`を公開し、別ディレクトリへクリーンインストールして`dist/index.js`のimportを確認 |
+| npm run release:pack | 成功。`opencode-codex-autoreasoning-0.2.5.tgz`と`SHA256SUMS`をローカル生成、公開なし |
+| npm publish + npm install | 成功。`opencode-codex-autoreasoning@0.2.5`を公開し、別ディレクトリへクリーンインストールして`dist/index.js`のimportを確認 |
 | git diff --check | 成功 |
 
 ## カタログ確認
