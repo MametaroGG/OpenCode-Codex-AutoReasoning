@@ -6,6 +6,8 @@
 
 GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effortを自動調整するOpenCode V2プラグイン。
 
+**Language:** 日本語 · [English](README.en.md)
+
 [![npm](https://img.shields.io/npm/v/opencode-codex-autoreasoning?style=flat-square&logo=npm)](https://www.npmjs.com/package/opencode-codex-autoreasoning)
 [![GitHub Package](https://img.shields.io/badge/GitHub_Packages-v0.2.4-18181b?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning)
 [![Release v0.2.4](https://img.shields.io/badge/release-v0.2.4-22c55e?style=flat-square)](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4)
@@ -14,7 +16,7 @@ GPT-6 Lunaが指示の難易度を判定し、OpenAIモデルのreasoning effort
 [![Node.js 22+](https://img.shields.io/badge/Node.js-%3E%3D22-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-[English](README.en.md) · [npmパッケージ](https://www.npmjs.com/package/opencode-codex-autoreasoning) · [GitHub Package](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning) · [GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
+[npmパッケージ](https://www.npmjs.com/package/opencode-codex-autoreasoning) · [GitHub Package](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/pkgs/npm/opencode-codex-autoreasoning) · [GitHub Releases](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/releases/tag/v0.2.4) · [クイックスタート](#quick-start) · [対応モデル](#models) · [設定](#configuration) · [不具合を報告](https://github.com/MametaroGG/OpenCode-Codex-AutoReasoning/issues)
 
 </div>
 
