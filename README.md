@@ -154,35 +154,30 @@ GPT-6 Lunaが難易度を判定
 
 ### モデル別ポリシー
 
-2026-11-18時点のOpenAIカタログ98項目を確認し、reasoning effortを持つ**32のAPI modelID**をすべて収録しています。複数評価を比較した9系列、思考量別sweepを追加確認した12系列、公開sweepがないため能力クラスから決めた11系列を、状態の`policy`欄で区別します。
+2026-11-18時点のOpenAIカタログ98項目を確認し、reasoning effortを持つ**32のAPI modelID**をすべて収録しています。公開測定に基づく21系列と、公開sweepがないため能力クラスから決めた11系列を、状態の`policy`欄で区別します。
 
-#### 公開測定に基づく9系列
+#### 公開測定に基づく21系列
 
-| 開発モデル | Very Low | Low | High | Very High |
-|---|---|---|---|---|
-| GPT-6.1 Sol | low | medium | high | xhigh |
-| GPT-6.1 Terra | low | high | xhigh | max |
-| GPT-6 Astra | low | low | medium | xhigh |
-| GPT-6 Sol | low | medium | xhigh | max |
-| GPT-6 Luna | low | high | xhigh | max |
-| GPT-5.6 Sol | low | medium | xhigh | max |
-| GPT-5.6 Terra | low | high | xhigh | max |
-| GPT-5.6 Luna | low | high | xhigh | max |
-| GPT-5.5 | low | high | xhigh | xhigh |
+`根拠`列の**r2**は複数の独立評価を比較した`benchmark-2026-11-09-r2`、**2026-11-18**は思考量別sweepを追加確認した`benchmark-2026-11-18-r1`です。どちらも4難易度ラベル別の最適値を実証した表ではありません。
 
-#### ベンチマーク基準12系列（2026-11-18追加）
-
-LiveBenchの生の思考量別行、OckBench、Artificial Analysis Intelligence Index v5.0.1を参照した個別ポリシーです。
-
-| 開発モデル | Very Low | Low | High | Very High |
-|---|---|---|---|---|
-| GPT-6.2 Sol／Astra | low | medium | high | xhigh |
-| GPT-5.4 | low | low | medium | xhigh |
-| GPT-5.4 mini／nano | low | medium | high | xhigh |
-| GPT-5.3 Codex | low | medium | high | xhigh |
-| GPT-5.2／GPT-5.1 | low | medium | high | high |
-| GPT-5／GPT-5 mini／GPT-5 nano | low | low | high | high |
-| o3 | low | medium | high | high |
+| 開発モデル | Very Low | Low | High | Very High | 根拠 |
+|---|---|---|---|---|---|---|
+| GPT-6.1 Sol | low | medium | high | xhigh | r2 |
+| GPT-6.1 Terra | low | high | xhigh | max | r2 |
+| GPT-6 Astra | low | low | medium | xhigh | r2 |
+| GPT-6 Sol | low | medium | xhigh | max | r2 |
+| GPT-6 Luna | low | high | xhigh | max | r2 |
+| GPT-5.6 Sol | low | medium | xhigh | max | r2 |
+| GPT-5.6 Terra | low | high | xhigh | max | r2 |
+| GPT-5.6 Luna | low | high | xhigh | max | r2 |
+| GPT-5.5 | low | high | xhigh | xhigh | r2 |
+| GPT-6.2 Sol／Astra | low | medium | high | xhigh | 2026-11-18 |
+| GPT-5.4 | low | low | medium | xhigh | 2026-11-18 |
+| GPT-5.4 mini／nano | low | medium | high | xhigh | 2026-11-18 |
+| GPT-5.3 Codex | low | medium | high | xhigh | 2026-11-18 |
+| GPT-5.2／GPT-5.1 | low | medium | high | high | 2026-11-18 |
+| GPT-5／GPT-5 mini／GPT-5 nano | low | low | high | high | 2026-11-18 |
+| o3 | low | medium | high | high | 2026-11-18 |
 
 #### ヒューリスティック11系列
 
@@ -198,7 +193,7 @@ Fast／Flex／Pro／Ultrafastは**カタログのAPI modelIDが同じ場合**に
 
 reasoning variantを持たない`chat-latest`、`gpt-audio-1.5`、`gpt-5-search-api`、GPT-4.1／GPT-4o系は、思考量を変更せず元の設定のまま動作します。
 
-r2の9系列はVulcanBench、Datacurve DeepSWE、Artificial Analysis、Hex DataBench等、2026-11-18の12系列はLiveBench・OckBench・Artificial Analysis Indexを参考にした**暫定ポリシー**です。ヒューリスティック11系列は、それらの一次評価がまだないため能力クラスから設計した**未測定ポリシー**です。いずれも公式がこの割当を推奨しているわけではなく、最適性や実利用での品質・節約効果を保証しません。[選択方針](docs/MODEL-POLICIES.md)・[ベンチマーク比較](docs/MULTI-BENCHMARK-REVIEW.md)で根拠と限界を説明しています。
+公開測定に基づく21系列のうち、r2の9系列はVulcanBench、Datacurve DeepSWE、Artificial Analysis、Hex DataBench等、2026-11-18の12系列はLiveBench・OckBench・Artificial Analysis Indexを参考にした**暫定ポリシー**です。ヒューリスティック11系列は、それらの一次評価がまだないため能力クラスから設計した**未測定ポリシー**です。いずれも公式がこの割当を推奨しているわけではなく、最適性や実利用での品質・節約効果を保証しません。[選択方針](docs/MODEL-POLICIES.md)・[ベンチマーク比較](docs/MULTI-BENCHMARK-REVIEW.md)で根拠と限界を説明しています。
 
 実際には、カタログで確認できた`reasoningEffort`だけを使います。min/maxの範囲内で切り上げ、なければ範囲内の最大対応値を選択します。対応不明・設定方式の混在・範囲内に候補がない場合は変更しません。`none`は自動選択しませんが、ユーザーの明示設定は保持します。
 
